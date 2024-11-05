@@ -1,0 +1,186 @@
+      html,
+      body {
+          font-family: Arial, sans-serif;
+          font-weight: 100;
+          line-height: 22px;
+          font-style: normal;
+          display: flex;
+          flex-direction: column;
+          margin: 0;
+      }
+
+      .content {
+          max-width: 732px;
+          margin: 0 auto;
+          padding: 21px 0;
+          width: 100%;
+          flex-grow: 1;
+      }
+
+      .btns {
+          margin: 20px 20px 0 0;
+          font-size: 18px;
+          font-weight: 600;
+          border: 5px solid #fff;
+          background: none;
+          padding: 10px;
+          cursor: pointer;
+          transition: 0.2s ease;
+      }
+
+      .btns:hover {
+          background: #fff9f9;
+          border-left: 5px solid #efefef;
+          transition: 0.2s ease;
+      }
+
+      .b_input {
+          font-size: 22px;
+          font-weight: 600;
+          border-radius: 0px;
+          margin-top: 10px;
+          border-left: 5px solid #fff;
+          padding: 10px;
+          min-height: 20px;
+          outline: 0;
+          outline-offset: 0;
+          transition: 0.5s ease;
+      }
+
+      .b_input:active,
+      .b_input:hover,
+      .b_input:focus {
+          background: #fff9f9;
+          border-left: 5px solid #efefef;
+          outline: 0;
+          outline-offset: 0;
+          transition: 0.5s ease;
+      }
+
+      .a_input {
+          font-size: 13px;
+          font-weight: 100;
+          border-radius: 0px;
+          margin-top: 10px;
+          border-left: 5px solid #fff;
+          padding: 10px;
+          min-height: 20px;
+          outline: 0;
+          outline-offset: 0;
+          transition: 0.5s ease;
+      }
+
+      .a_input:active,
+      .a_input:hover,
+      .a_input:focus {
+          background: #fff9f9;
+          border-left: 5px solid #efefef;
+          outline: 0;
+          outline-offset: 0;
+          transition: 0.5s ease;
+      }
+
+      #editable {
+          border-radius: 0px;
+          margin-top: 10px;
+          border-left: 5px solid #fff;
+          padding: 10px;
+          min-height: 20em;
+          transition: 0.5s ease;
+
+      }
+
+      #editable:active,
+      #editable:hover,
+      #editable:focus {
+          background: #fff9f9;
+          border-left: 5px solid #efefef;
+          outline: 0;
+          outline-offset: 0;
+          transition: 0.5s ease;
+      }
+
+      #toolbar {
+          display: none;
+          position: absolute;
+          background: hsl(0deg 0% 20% / 85%);
+          color: #fff;
+          border-radius: 10px;
+          padding: 5px;
+          font-size: 12px;
+          z-index: 1000;
+          backdrop-filter: blur(5px);
+          box-shadow: 0px 1px 8px #6d6d6d;
+          transition: 0.5s ease;
+      }
+
+      #toolbar button {
+          background: none;
+          border: none;
+          color: #fff;
+          cursor: pointer;
+          padding: 5px;
+          font-size: 20px;
+          transition: 0.5s ease;
+      }
+
+      #toolbar button:hover {
+          color: #ddd;
+          transition: 0.5s ease;
+      }
+
+      #toolbar select {
+          background: hsl(0deg 0% 20% / 85%);
+          color: #fff;
+          border: none;
+          cursor: pointer;
+          padding: 5px;
+          border-radius: 10px;
+          font-size: 14px;
+          transition: 0.5s ease;
+      }
+
+      #toolbar select:hover {
+          color: #ddd;
+          transition: 0.5s ease;
+      }
+
+      div[contenteditable^="true"].empty:before {
+          content: attr(data-placeholder) !important;
+          color: #a2a2a2;
+      }
+
+
+      .spoiler {
+          margin: 10px 0;
+      }
+
+      .spoiler-header {
+          font-weight: bold;
+          cursor: pointer;
+          background-color: #fff;
+          padding: 10px;
+          border: 0px solid #ddd;
+          border-radius: 10px;
+      }
+
+      .spoiler-header:hover {
+          background-color: #fff9f9;
+      }
+
+      .spoiler-content {
+          max-height: 0;
+          overflow: hidden;
+          transition: max-height 0.4s ease;
+          background-color: #fff9f9;
+          padding: 0 10px;
+          border: 0px solid #ddd;
+          border-top: none;
+          border-radius: 10px;
+      }
+
+      .ip {
+          background: #e2e2e2;
+          padding: 2px;
+          border-radius: 5px;
+      }
