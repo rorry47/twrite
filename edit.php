@@ -28,6 +28,11 @@ if ($edit_page['hash'] !== $_SESSION['hash']) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit | <?php echo $name_project; ?></title>
+	<meta itemprop="name" content="<?php echo $name_project; ?>">
+	<meta name="description" content="Simple service for publishing text posts.">
+	<meta name="twitter:card" content="summary">
+	<meta name="twitter:title" content="<?php echo $name_project; ?>" />
+	<meta name="twitter:description" content="Simple service for publishing text posts.">
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.css" rel="stylesheet" />
