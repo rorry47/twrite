@@ -8,6 +8,8 @@ Simple service for publishing text posts. [Telegra.ph](https://telegra.ph/) anal
 
 # Settings
 
+`texting.sql` - The structure of the table that you can import into your database.
+
 In file index.php enter connect to database:
 ```php
 $host = '';         // host 
