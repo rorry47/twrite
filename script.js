@@ -32,22 +32,43 @@
 
 
 
-    document.getElementById('editable').addEventListener('input', function(event) {
-        const editableDiv = event.currentTarget;
+document.getElementById('editable').addEventListener('input', function(event) {
+    const editableDiv = event.currentTarget;
+    
+     const regex = /(https?:\/\/\S+\.(jpg|jpeg|png|gif))/gi;
 
-        const regex = /(?<!<img src=["'])(https?:\/\/\S+\.(jpg|jpeg|png|gif))(?!["']>)/gi;
+     const selection = window.getSelection();
+    const range = selection.getRangeAt(0).cloneRange();
 
-        editableDiv.innerHTML = editableDiv.innerHTML.replace(regex, function(url) {
-            return `<img src="${url}" alt="Image" style="max-width: 100%; height: auto;">`;
-        });
+     editableDiv.childNodes.forEach((node) => {
+         if (node.nodeType === Node.TEXT_NODE && regex.test(node.textContent)) {
+            const matches = node.textContent.match(regex);
 
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(editableDiv);
-        range.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(range);
+            matches.forEach(url => {
+                 const img = document.createElement("img");
+                img.src = url;
+                img.alt = "Image";
+                img.style.maxWidth = "100%";
+                img.style.height = "auto";
+
+                 const textBefore = node.textContent.split(url)[0];
+                const textAfter = node.textContent.split(url)[1];
+                
+                 if (textBefore) {
+                    editableDiv.insertBefore(document.createTextNode(textBefore), node);
+                }
+                editableDiv.insertBefore(img, node);
+                if (textAfter) {
+                    editableDiv.insertBefore(document.createTextNode(textAfter), node);
+                }
+                editableDiv.removeChild(node);
+            });
+        }
     });
+
+     selection.removeAllRanges();
+    selection.addRange(range);
+});
 
 
 
