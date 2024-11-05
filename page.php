@@ -22,18 +22,27 @@ if (!empty($row_page['ip'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php 
-
-if (!empty($row_page['pass'])) {
-    if ($row_page['pass'] !== @$_SESSION['pass']) {
-       echo "**********";
-    } else {
-        echo  $row_page['name']; 
-    }
-} else {
-    echo  $row_page['name']; 
+<?php 
+function render_meta($title, $description) {
+    global $name_project;
+    ?>
+    <title><?php echo $title; ?> | <?php echo $name_project; ?></title>
+    <meta itemprop="name" content="<?php echo $title; ?>">
+    <meta itemprop="description" content="<?php echo $description; ?>">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="<?php echo $title; ?>" />
+    <meta name="twitter:description" content="<?php echo $description; ?>">
+    <?php
 }
-?> | <?php echo $name_project; ?></title>
+$page_name = $row_page['name'];
+$page_description = strip_tags(mb_substr(htmlspecialchars_decode($row_page['text']), 0, 100, "UTF-8")) . "...";
+if ((!empty($row_page['pass']) && $row_page['pass'] !== @$_SESSION['pass']) || 
+    (!empty($row_page['ip']) && $row_page['ip'] != $user_ip)) {
+    render_meta("*************", "*************");
+} else {
+    render_meta($page_name, $page_description);
+}
+?>
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.css" rel="stylesheet" />
