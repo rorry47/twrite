@@ -35,4 +35,4 @@ $name_project = "twrite"; //name
 ---
 The result will be something like this:
 
-<img src="https://raw.githubusercontent.com/rorry47/twrite/refs/heads/main/twrite_pic.jpg">
+<img src="https://github.com/rorry47/twrite/blob/main/scrn.jpg">
