@@ -42,8 +42,22 @@ if (isset($_POST['edit']) && $is_owner) {
 if (isset($_POST['send'])) {
     if (csrf_valid()) {
         $entered = mb_substr($_POST['pass'] ?? '', 0, 128, "UTF-8");
-        if (password_verify($entered, $row_page['pass'])) {
+        $attempt_key = 'pass_attempts_' . (int)$row_page['id'];
+        $attempts = $_SESSION[$attempt_key] ?? ['count' => 0, 'since' => time()];
+        if (!is_array($attempts) || time() - (int)($attempts['since'] ?? 0) >= 900) {
+            $attempts = ['count' => 0, 'since' => time()];
+        }
+        if ((int)$attempts['count'] >= 5) {
+            http_response_code(429);
+            header('Retry-After: ' . max(1, 900 - (time() - (int)$attempts['since'])));
+            exit('Too many attempts. Try again later.');
+        }
+        if ($is_locked && password_verify($entered, $row_page['pass'])) {
             $_SESSION['pass_' . $row_page['id']] = true;
+            unset($_SESSION[$attempt_key]);
+        } else {
+            $attempts['count']++;
+            $_SESSION[$attempt_key] = $attempts;
         }
     }
     header('Location: /' . $url);
