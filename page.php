@@ -175,7 +175,7 @@ endif;
     </div>
 </div>
 
-<script src="/script.js?v=13"></script>
+<script src="/script.js?v=14"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
