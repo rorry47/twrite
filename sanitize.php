@@ -19,7 +19,7 @@ function twrite_sanitize_html(string $html): string {
     libxml_use_internal_errors($previous);
     $root = $dom->getElementById('twrite-root');
     if (!$root) return htmlspecialchars(strip_tags($html), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    $allowed = ['b', 'strong', 'i', 'em', 'u', 's', 'strike', 'a', 'br', 'p', 'div', 'pre', 'code', 'img', 'font', 'span', 'ul', 'ol', 'li', 'blockquote'];
+    $allowed = ['b', 'strong', 'i', 'em', 'u', 's', 'strike', 'a', 'br', 'p', 'div', 'pre', 'code', 'img', 'font', 'span', 'ul', 'ol', 'li', 'blockquote', 'h2', 'h3', 'h4', 'table', 'thead', 'tbody', 'tr', 'th', 'td'];
     // Attribute filtering is done in a separate pass to avoid retaining event handlers.
     $filter = function (DOMNode $node) use (&$filter, $allowed): void {
         foreach (iterator_to_array($node->childNodes) as $child) {
