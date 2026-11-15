@@ -75,7 +75,7 @@ if (isset($_POST['publish'])) {
     }
 
     unset($_SESSION['pass_' . $post_id]);
-    header('Location: /' . $edit_page['link']);
+    header('Location: /' . $edit_page['link'] . '?draft_saved=edit_' . $edit_slug);
     exit();
 }
 
