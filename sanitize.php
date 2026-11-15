@@ -2,7 +2,7 @@
 // HTML allowlist for user-generated posts. Requires PHP DOM extension.
 function twrite_safe_url(string $url): string {
     $url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-    if (preg_match('/[\x00-\x20\x7f]/', $url)) return '';
+    if (preg_match('/[\\x00-\\x20\\x7f]/', $url)) return '';
     $parts = parse_url($url);
     if ($parts === false || !isset($parts['scheme'], $parts['host'])) return '';
     return in_array(strtolower($parts['scheme']), ['http', 'https'], true) ? $url : '';
