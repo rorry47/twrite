@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Convert only a complete pasted/typed image URL in a text node.
     editable.addEventListener('input', function () {
-        const regex = /https?:\/\/[^\\s<>"']+?\\.(?:jpe?g|png|gif|webp)(?:\\?[^\\s<>"']*)?/gi;
+        const regex = /https?:\/\/[^\s<>"']+?\.(?:jpe?g|png|gif|webp)(?:\?[^\s<>"']*)?/gi;
         const walker = document.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
         const nodes = [];
         while (walker.nextNode()) nodes.push(walker.currentNode);
