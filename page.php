@@ -98,7 +98,7 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=7" rel="stylesheet" />
+    <link href="/css/twrite.css?v=8" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -137,15 +137,7 @@ document.getElementById('copy-post-link').addEventListener('click', async functi
     }
 });
 </script>
-<button id="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle dark mode"><i class="fa-solid fa-circle-half-stroke"></i></button>
-<script>
-document.getElementById('theme-toggle').addEventListener('click', function () {
-    var root = document.documentElement;
-    var dark = root.getAttribute('data-theme') === 'dark';
-    root.setAttribute('data-theme', dark ? 'light' : 'dark');
-    try { localStorage.setItem('theme', dark ? 'light' : 'dark'); } catch (e) {}
-});
-</script>
+
 
 <?php if ($is_locked && !$pass_ok): ?>
 <div class="content">
@@ -183,7 +175,7 @@ endif;
     </div>
 </div>
 
-<script src="/script.js?v=9"></script>
+<script src="/script.js?v=10"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
