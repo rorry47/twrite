@@ -35,7 +35,7 @@ if (isset($_POST['publish'])) {
     $text = twrite_sanitize_html($text);
 
     if (empty($title) || empty(trim(strip_tags($text)))) {
-        header('Location: /');
+        header('Location: /?edit=' . rawurlencode($edit_slug) . '&validation_error=1', true, 303);
         exit();
     }
 
