@@ -96,7 +96,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=4" rel="stylesheet" />
+    <link href="/css/twrite.css?v=5" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -148,7 +148,7 @@ $csrf_token = $_SESSION['csrf_token'];
             </div>
             <div>
                 <i class="fa-solid fa-key"></i> Close with password: <br>
-                <div class="password-field"><input id="publication-password" type="password" name="password" maxlength="128" placeholder="password" autocomplete="new-password"><button type="button" class="generate-password" aria-label="Generate secure password" title="Generate secure password"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Generate</span></button></div>
+                <div class="password-field"><input id="publication-password" type="password" name="password" maxlength="128" placeholder="password" autocomplete="new-password"><div class="password-controls"><button type="button" class="generate-password" aria-label="Generate new password" title="Generate new password"><i class="fa-solid fa-wand-magic-sparkles"></i></button><button type="button" class="copy-password" aria-label="Copy password" title="Copy password"><i class="fa-regular fa-copy"></i></button></div></div>
             </div>
         </div>
     </div>
@@ -156,7 +156,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <div class="editor-actions"><span class="editor-hint"><i class="fa-solid fa-shield-halved"></i> Your draft is saved in this tab</span><button class="btns" name="publish" id="publish" type="submit"><i class="fa-regular fa-paper-plane"></i> Publish</button></div>
 </form>
 </div>
-<script src="/script.js?v=5"></script>
+<script src="/script.js?v=6"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
