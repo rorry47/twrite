@@ -364,3 +364,50 @@ document.addEventListener('keydown', function (event) {
         }
     }
 });
+
+
+// Live writing metrics; count Unicode characters rather than UTF-16 units.
+(function () {
+    function measure(element) {
+        const text = element?.textContent || '';
+        const words = text.trim().match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*/gu) || [];
+        return {words: words.length, characters: Array.from(text).length, minutes: words.length ? Math.max(1, Math.ceil(words.length / 200)) : 0};
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const editor = document.getElementById('editable');
+        if (!editor) return;
+        const wordsEl = document.getElementById('word-count');
+        const charsEl = document.getElementById('char-count');
+        const timeEl = document.getElementById('reading-time');
+        const readerTime = document.getElementById('reader-reading-time');
+        const update = function () {
+            const result = measure(editor);
+            if (wordsEl) wordsEl.textContent = result.words + ' words';
+            if (charsEl) charsEl.textContent = result.characters + ' characters';
+            if (timeEl) timeEl.textContent = result.minutes + ' min read';
+            if (readerTime) readerTime.textContent = result.minutes + ' min read';
+        };
+        update();
+        if (wordsEl) {
+            editor.addEventListener('input', update);
+            // Restore may run earlier during DOMContentLoaded.
+            window.addEventListener('pageshow', update);
+        }
+    });
+})();
+
+// Focus mode hides page chrome and publication settings, not the actual editor.
+document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('focus-toggle');
+    if (!toggle) return;
+    const setFocus = function (enabled) {
+        document.body.classList.toggle('focus-mode', enabled);
+        toggle.setAttribute('aria-pressed', String(enabled));
+        toggle.innerHTML = enabled ? '<i class="fa-solid fa-compress"></i> Exit focus' : '<i class="fa-solid fa-expand"></i> Focus';
+        toggle.title = enabled ? 'Exit focus mode (Esc)' : 'Focus mode';
+    };
+    toggle.addEventListener('click', function () { setFocus(!document.body.classList.contains('focus-mode')); });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && document.body.classList.contains('focus-mode')) setFocus(false);
+    });
+});
