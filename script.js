@@ -1,3 +1,49 @@
+// Sanitize browser-side draft/preview HTML; server sanitizer remains authoritative.
+function twriteSanitizeDraft(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    const allowed = new Set(['B','STRONG','I','EM','U','S','STRIKE','A','BR','P','DIV','PRE','CODE','IMG','FONT','SPAN','UL','OL','LI','BLOCKQUOTE']);
+    const blocked = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','SVG','MATH','FORM','INPUT','BUTTON','TEXTAREA','TEMPLATE','VIDEO','AUDIO','BASE','META','LINK']);
+    function safeUrl(value) {
+        try {
+            if (/[\\x00-\\x20\\x7f]/.test(value)) return '';
+            const url = new URL(value);
+            return url.protocol === 'https:' || url.protocol === 'http:' ? value : '';
+        } catch (e) { return ''; }
+    }
+    function clean(parent) {
+        Array.from(parent.childNodes).forEach(function (node) {
+            if (node.nodeType === Node.COMMENT_NODE) { node.remove(); return; }
+            if (node.nodeType !== Node.ELEMENT_NODE) return;
+            if (blocked.has(node.tagName)) { node.remove(); return; }
+            clean(node);
+            if (!allowed.has(node.tagName)) {
+                node.replaceWith(...Array.from(node.childNodes));
+                return;
+            }
+            const href = node.tagName === 'A' ? safeUrl(node.getAttribute('href') || '') : '';
+            const src = node.tagName === 'IMG' ? safeUrl(node.getAttribute('src') || '') : '';
+            const fontSize = /(?:^|;)\\s*font-size\\s*:\\s*(1[0-9]|2[0-9]|30)px\\s*(?:;|$)/i.exec(node.getAttribute('style') || '');
+            Array.from(node.attributes).forEach(attr => node.removeAttribute(attr.name));
+            if (node.tagName === 'A' && href) {
+                node.setAttribute('href', href);
+                node.setAttribute('rel', 'nofollow noopener noreferrer');
+            }
+            if (node.tagName === 'IMG') {
+                if (!src) { node.remove(); return; }
+                node.setAttribute('src', src);
+                node.setAttribute('alt', 'Image');
+                node.setAttribute('loading', 'lazy');
+            }
+            if (fontSize && (node.tagName === 'FONT' || node.tagName === 'SPAN')) {
+                node.setAttribute('style', 'font-size:' + fontSize[1] + 'px');
+            }
+        });
+    }
+    clean(template.content);
+    return template.innerHTML;
+}
+
 // ─── Синхронизация hidden inputs перед отправкой ───────────────────────────
 document.getElementById('formText')?.addEventListener('submit', function (event) {
     const titleEl    = document.getElementById('b_input');
@@ -71,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const el = document.getElementById(id);
                     const value = saved.fields[id];
                     if (!el || typeof value !== 'string') return;
-                    if (id === 'editable') el.innerHTML = value;
+                    if (id === 'editable') el.innerHTML = twriteSanitizeDraft(value);
                     else el.textContent = value;
                 });
                 ['delete', 'access_ip'].forEach(id => {
@@ -338,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('preview-title').textContent = document.getElementById('b_input')?.textContent || 'Untitled';
         document.getElementById('preview-author').textContent = document.getElementById('a_input')?.textContent || '';
         const target = document.getElementById('preview-body');
-        target.replaceChildren(...Array.from(document.getElementById('editable').cloneNode(true).childNodes));
+        target.innerHTML = twriteSanitizeDraft(document.getElementById('editable').innerHTML);
         dialog.showModal();
     });
     close.addEventListener('click', function () { dialog.close(); });
