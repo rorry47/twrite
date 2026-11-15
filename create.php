@@ -84,7 +84,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=9" rel="stylesheet" />
+    <link href="/css/twrite.css?v=10" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -147,7 +147,7 @@ $csrf_token = $_SESSION['csrf_token'];
 </form>
 <dialog id="preview-dialog" class="preview-dialog" aria-label="Publication preview"><div class="preview-top"><span>Preview</span><button type="button" id="close-preview" aria-label="Close preview"><i class="fa-solid fa-xmark"></i></button></div><article class="reading-page"><h1 id="preview-title"></h1><div id="preview-author"></div><div id="preview-body"></div></article></dialog>
 </div>
-<script src="/script.js?v=10"></script>
+<script src="/script.js?v=11"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
