@@ -295,3 +295,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+
+// Copy the password without changing its value.
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.copy-password').forEach(function (button) {
+        button.addEventListener('click', async function () {
+            const input = button.closest('.password-field')?.querySelector('input[name="password"]');
+            if (!input || !input.value) {
+                button.title = 'Enter or generate a password first';
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(input.value);
+                const icon = button.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-check';
+                button.title = 'Copied';
+                button.setAttribute('aria-label', 'Password copied');
+                window.setTimeout(function () {
+                    if (icon) icon.className = 'fa-regular fa-copy';
+                    button.title = 'Copy password';
+                    button.setAttribute('aria-label', 'Copy password');
+                }, 1500);
+            } catch (error) {
+                // Clipboard permission may be denied; select for manual copy.
+                input.focus();
+                input.select();
+                button.title = 'Press Ctrl+C or Cmd+C to copy';
+            }
+        });
+    });
+});
