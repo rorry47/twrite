@@ -27,7 +27,7 @@ function is_post_owner(array $post): bool {
     $token = $_COOKIE[owner_cookie_name((int)$post['id'])] ?? '';
     if (is_string($token) && $token !== '' && hash_equals($post['hash'], hash('sha256', $token))) return true;
     // Legacy owner sessions are accepted only for posts created before the migration.
-    return !empty($_SESSION['hash']) && hash_equals($post['hash'], $_SESSION['hash']);
+    return !empty($_SESSION['hash']) && is_string($_SESSION['hash']) && hash_equals($post['hash'], $_SESSION['hash']);
 }
 function remember_post_owner(int $id, string $token): void {
     setcookie(owner_cookie_name($id), $token, [
@@ -46,7 +46,9 @@ ob_start("mb_output_handler");
 header('Content-Type: text/html; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
-header('X-XSS-Protection: 1; mode=block');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
+header('X-XSS-Protection: 0');
 
 $name_project = "twrite"; //name
 require_once __DIR__ . '/sanitize.php';
