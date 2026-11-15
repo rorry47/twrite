@@ -251,7 +251,8 @@ function toggleSpoiler(element) {
 })();
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Кнопка переключения темы — добавляем динамически
+    // Published pages already render their own theme toggle.
+    if (document.getElementById('theme-toggle')) return;
     const btn = document.createElement('button');
     btn.id        = 'theme-toggle';
     btn.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
