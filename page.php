@@ -84,7 +84,7 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=4" rel="stylesheet" />
+    <link href="/css/twrite.css?v=6" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -109,6 +109,20 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
 </head>
 <body>
 <header class="site-header"><a class="brand" href="/"><span class="brand-mark">t</span>twrite</a><span class="header-right">Write. Share. Simple.</span></header>
+<button type="button" id="copy-post-link" class="copy-post-link" aria-label="Copy publication link" title="Copy publication link"><i class="fa-regular fa-copy"></i><span>Copy link</span></button>
+<script>
+document.getElementById('copy-post-link').addEventListener('click', async function () {
+    var button = this;
+    var url = window.location.origin + window.location.pathname;
+    try {
+        await navigator.clipboard.writeText(url);
+        button.querySelector('span').textContent = 'Copied!';
+        window.setTimeout(function () { button.querySelector('span').textContent = 'Copy link'; }, 1800);
+    } catch (e) {
+        window.prompt('Copy publication link:', url);
+    }
+});
+</script>
 <button id="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Toggle dark mode"><i class="fa-solid fa-circle-half-stroke"></i></button>
 <script>
 document.getElementById('theme-toggle').addEventListener('click', function () {
