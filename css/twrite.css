@@ -194,3 +194,14 @@ body:has(.copy-post-link) .copy-post-link{right:calc(22px + 104px + 12px);bottom
 #editable th,#editable td{border:1px solid var(--line);padding:9px 12px;vertical-align:top;overflow-wrap:anywhere;min-width:30px}
 #editable th{background:var(--soft);font-weight:650}
 #formText #toolbar select{max-width:125px}
+
+/* Interactive table dimension picker. */
+#formText #toolbar{position:relative}
+#formText #toolbar .table-grid-picker{position:absolute;z-index:1010;top:calc(100% + 6px);left:0;width:max-content;max-width:min(100%,320px);padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 28px rgba(0,0,0,.16);color:var(--ink)}
+#formText #toolbar .table-grid-picker[hidden]{display:none!important}
+.table-grid-label{font-size:12px;color:var(--muted);margin-bottom:9px;text-align:center}
+.table-grid-cells{display:grid;grid-template-columns:repeat(8,22px);gap:4px}
+#formText #toolbar .table-grid-cell{display:block;min-height:0;width:22px;height:22px;padding:0;border:1px solid var(--line);border-radius:4px;background:var(--soft);cursor:pointer}
+#formText #toolbar .table-grid-cell.selected,#formText #toolbar .table-grid-cell:hover{background:var(--accent);border-color:var(--accent)}
+#formText #toolbar .table-grid-cell:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media(max-width:400px){.table-grid-cells{grid-template-columns:repeat(8,19px);gap:3px}#formText #toolbar .table-grid-cell{width:19px;height:19px}}
