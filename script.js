@@ -213,101 +213,52 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Show a compact formatting trigger on selection; open tools only on demand.
+// Divider-mounted formatting controls: never appear automatically on selection.
 document.addEventListener('DOMContentLoaded', function () {
+    const trigger = document.getElementById('format-trigger');
     const toolbar = document.getElementById('toolbar');
     const editor = document.getElementById('editable');
-    if (!toolbar || !editor) return;
-    const trigger = document.createElement('button');
-    trigger.type = 'button';
-    trigger.id = 'format-trigger';
-    trigger.title = 'Formatting tools';
-    trigger.setAttribute('aria-label', 'Open formatting tools');
-    trigger.setAttribute('aria-expanded', 'false');
-    trigger.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>';
-    document.body.appendChild(trigger);
+    if (!trigger || !toolbar || !editor) return;
     let savedRange = null;
-    let open = false;
-    function hide() {
-        open = false;
-        toolbar.style.display = 'none';
-        trigger.style.display = 'none';
-        trigger.setAttribute('aria-expanded', 'false');
-        savedRange = null;
-    }
-    function position(element, rect, above) {
-        element.style.left = '0px';
-        element.style.top = '0px';
-        element.style.display = element === toolbar ? 'flex' : 'grid';
-        const width = element.offsetWidth;
-        const height = element.offsetHeight;
-        const left = Math.max(10, Math.min(window.scrollX + rect.left, window.scrollX + document.documentElement.clientWidth - width - 10));
-        const desired = above ? rect.top + window.scrollY - height - 9 : rect.bottom + window.scrollY + 9;
-        element.style.left = left + 'px';
-        element.style.top = Math.max(window.scrollY + 8, desired) + 'px';
-    }
-    function selectionRange() {
-        const sel = window.getSelection();
-        if (!sel || sel.isCollapsed || !sel.rangeCount || !sel.toString().trim()) return null;
-        const range = sel.getRangeAt(0);
-        if (!editor.contains(range.commonAncestorContainer)) return null;
-        return range.cloneRange();
-    }
-    function update() {
-        if (open) return;
-        const range = selectionRange();
-        if (!range) { hide(); return; }
-        savedRange = range;
-        position(trigger, range.getBoundingClientRect(), true);
+    function rememberSelection() {
+        const selection = window.getSelection();
+        if (!selection || !selection.rangeCount) return;
+        const range = selection.getRangeAt(0);
+        if (editor.contains(range.commonAncestorContainer)) savedRange = range.cloneRange();
     }
     function restoreSelection() {
-        if (!savedRange) return;
+        if (!savedRange) { editor.focus(); return; }
+        editor.focus();
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(savedRange);
     }
+    function setOpen(open) {
+        toolbar.classList.toggle('is-open', open);
+        trigger.setAttribute('aria-expanded', String(open));
+        trigger.classList.toggle('is-active', open);
+    }
+    document.addEventListener('selectionchange', rememberSelection);
     trigger.addEventListener('mousedown', event => event.preventDefault());
-    trigger.addEventListener('click', function () {
-        if (!savedRange) return;
-        restoreSelection();
-        open = true;
-        trigger.style.display = 'none';
-        trigger.setAttribute('aria-expanded', 'true');
-        position(toolbar, savedRange.getBoundingClientRect(), true);
-    });
-    toolbar.addEventListener('mousedown', function (event) {
+    trigger.addEventListener('click', () => setOpen(!toolbar.classList.contains('is-open')));
+    toolbar.addEventListener('mousedown', event => {
         if (event.target.closest('button')) {
             event.preventDefault();
             restoreSelection();
         }
     });
-    toolbar.addEventListener('click', function (event) {
-        if (event.target.closest('button')) {
-            // Keep the toolbar available for applying multiple formats.
-            const next = selectionRange();
-            if (next) savedRange = next;
-        }
-    });
-    document.addEventListener('mouseup', event => {
-        if (toolbar.contains(event.target) || trigger.contains(event.target)) return;
-        update();
-    });
-    document.addEventListener('keyup', event => {
-        if (event.target === editor || editor.contains(event.target)) update();
+    toolbar.addEventListener('change', event => {
+        if (event.target.matches('select')) restoreSelection();
     });
     document.addEventListener('mousedown', event => {
-        if (!toolbar.contains(event.target) && !trigger.contains(event.target) && !editor.contains(event.target)) hide();
+        if (!toolbar.contains(event.target) && !trigger.contains(event.target)) setOpen(false);
     });
     document.addEventListener('keydown', event => {
-        if (event.key === 'Escape' && (open || trigger.style.display !== 'none')) hide();
+        if (event.key === 'Escape' && toolbar.classList.contains('is-open')) {
+            setOpen(false);
+            trigger.focus();
+        }
     });
-    editor.addEventListener('input', function () {
-        if (open) hide();
-    });
-    window.addEventListener('scroll', function () {
-        if (open) hide();
-        else if (savedRange) update();
-    }, {passive:true});
 });
 
 // ─── Функции тулбара ───────────────────────────────────────────────────────
