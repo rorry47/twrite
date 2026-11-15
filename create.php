@@ -84,7 +84,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=12" rel="stylesheet" />
+    <link href="/css/twrite.css?v=13" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -116,6 +116,14 @@ $csrf_token = $_SESSION['csrf_token'];
             <option value="25px">25px</option>
             <option value="30px">30px</option>
         </select>
+        <select aria-label="Heading style" title="Heading style" onchange="formatHeading(this.value);this.selectedIndex=0">
+            <option value="">Heading</option>
+            <option value="h2">Heading 1</option>
+            <option value="h3">Heading 2</option>
+            <option value="h4">Heading 3</option>
+            <option value="p">Paragraph</option>
+        </select>
+        <button type="button" onclick="insertTable()" title="Insert table" aria-label="Insert table"><i class="fa-solid fa-table"></i></button>
         <button type="button" onclick="insertLink()"><i class="fa-solid fa-link"></i></button>
         <button type="button" onclick="formatAsCode()"><i class="fa-solid fa-code"></i></button>
     </div>
@@ -147,7 +155,7 @@ $csrf_token = $_SESSION['csrf_token'];
 </form>
 <dialog id="preview-dialog" class="preview-dialog" aria-label="Publication preview"><div class="preview-top"><span>Preview</span><button type="button" id="close-preview" aria-label="Close preview"><i class="fa-solid fa-xmark"></i></button></div><article class="reading-page"><h1 id="preview-title"></h1><div id="preview-author"></div><div id="preview-body"></div></article></dialog>
 </div>
-<script src="/script.js?v=14"></script>
+<script src="/script.js?v=15"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
