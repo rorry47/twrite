@@ -117,7 +117,7 @@ endif;
     <div class="a_input" id="a_input"><i class="fa-solid fa-at"></i> <?php echo htmlspecialchars($row_page['author'], ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>
     <div class="data"><i class="fa-regular fa-calendar-days"></i> <?php echo htmlspecialchars(substr($row_page['date'], 0, 10)); ?></div>
-    <div id="editable" class="editable"><?php echo $row_page['text']; ?></div>
+    <div id="editable" class="editable"><?php echo twrite_sanitize_html($row_page['text']); ?></div>
 
     <?php if ($is_owner): ?>
     <form method="post">
