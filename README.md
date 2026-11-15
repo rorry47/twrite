@@ -8,11 +8,11 @@ Simple service for publishing text posts. [Telegra.ph](https://telegra.ph/) anal
 
 # Settings
 
-Import `twrite/twrite.sql` into MySQL.
+Import `twrite.sql` into MySQL.
 
-Copy `twrite/.env.example` to `twrite/.env` and configure `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`. The application reads this file at startup. Do not commit `.env`; it is excluded by `.gitignore`.
+Copy `.env.example` to `.env` and configure `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`. The application reads this file at startup. Do not commit `.env`; it is excluded by `.gitignore`.
 
-For Nginx, add the deny rule from `twrite/nginx-security.conf` to your active server block (and reload Nginx). Apache uses `twrite/.htaccess` if overrides are enabled. Prefer storing `.env` outside the public web root when deploying; if it remains in the document root, verify direct HTTP requests to `/.env` return 403/404. Restrict file permissions to the PHP-FPM user.
+For Nginx, add the deny rule from `nginx-security.conf` to your active server block (and reload Nginx). Apache uses `.htaccess` if overrides are enabled. Prefer storing `.env` outside the public web root when deploying; if it remains in the document root, verify direct HTTP requests to `/.env` return 403/404. Restrict file permissions to the PHP-FPM user.
 
 In file index.php enter name project:
 ```php
