@@ -32,18 +32,7 @@ if (isset($_POST['publish'])) {
     $text   = mb_substr($_POST['editable'] ?? '', 0, 100000, "UTF-8");
     $pass   = mb_substr(trim($_POST['password'] ?? ''), 0, 128, "UTF-8");
 
-    $allowed_tags = '<b><i><u><s><a><br><p><pre><code><img><font>';
-    $text = strip_tags($text, $allowed_tags);
-    $text = preg_replace_callback(
-        '/<img\s+src="([^"]+)"[^>]*>/i',
-        function($m) {
-            $src = filter_var($m[1], FILTER_SANITIZE_URL);
-            return preg_match('/^https?:\/\//i', $src)
-                ? '<img src="' . htmlspecialchars($src, ENT_QUOTES, 'UTF-8') . '" alt="Image" style="max-width:100%;height:auto;">'
-                : '';
-        },
-        $text
-    );
+    $text = twrite_sanitize_html($text);
 
     if (empty($title) || empty(trim(strip_tags($text)))) {
         header('Location: /');
@@ -59,7 +48,7 @@ if (isset($_POST['publish'])) {
     }
 
     $ch_delete    = isset($_POST['delete'])    ? '1' : '';
-    $ch_access_ip = isset($_POST['access_ip']) ? $user_ip : '';
+    $ch_access_ip = isset($_POST['access_ip']) ? ($edit_page['ip'] ?: $user_ip) : '';
     $orig_hash    = $edit_page['hash'];
     $post_id      = (int)$edit_page['id'];
 
@@ -85,8 +74,7 @@ if (isset($_POST['publish'])) {
         http_response_code(500); exit('Unable to save changes');
     }
 
-    // Сохраняем hash в сессии — юзер остаётся владельцем после редактирования
-    // unset только edit и temp, hash оставляем
+    unset($_SESSION['pass_' . $post_id]);
     header('Location: /' . $edit_page['link']);
     exit();
 }
