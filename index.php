@@ -53,7 +53,6 @@ header('X-XSS-Protection: 0');
 // before a strict enforced policy can be enabled safely.
 header("Content-Security-Policy-Report-Only: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: http: data:; font-src 'self' data:; connect-src 'self'");
 
-$name_project = "twrite"; //name
 require_once __DIR__ . '/sanitize.php';
 
 $p_page_block = ['index.php', 'create.php', 'edit.php', 'page.php', '403.php', '404.php'];
@@ -76,6 +75,10 @@ if (!is_array($env)) {
     http_response_code(503);
     exit('Service configuration unavailable.');
 }
+// Optional display name; keep existing installations working without a new .env key.
+$name_project = isset($env['APP_NAME']) && is_string($env['APP_NAME']) && trim($env['APP_NAME']) !== ''
+    ? trim($env['APP_NAME']) : 'twrite';
+
 foreach (['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as $key) {
     if (!isset($env[$key]) || !is_string($env[$key])) {
         error_log('Missing environment setting: ' . $key);
