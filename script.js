@@ -264,3 +264,33 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('theme', isDark ? 'light' : 'dark');
     });
 });
+
+
+// Generate a cryptographically secure password without sending it anywhere.
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.generate-password').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const input = button.parentElement.querySelector('input[type="password"]');
+            if (!input || !window.crypto || !window.crypto.getRandomValues) return;
+            const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_';
+            const limit = Math.floor(256 / alphabet.length) * alphabet.length;
+            let password = '';
+            while (password.length < 20) {
+                const bytes = new Uint8Array(32);
+                window.crypto.getRandomValues(bytes);
+                for (const byte of bytes) {
+                    if (byte >= limit) continue;
+                    password += alphabet[byte % alphabet.length];
+                    if (password.length === 20) break;
+                }
+            }
+            input.value = password;
+            input.type = 'text';
+            input.dispatchEvent(new Event('input', {bubbles: true}));
+            button.setAttribute('title', 'Password generated; copy it before publishing');
+            button.setAttribute('aria-label', 'Generate another secure password');
+            input.focus();
+            input.select();
+        });
+    });
+});
