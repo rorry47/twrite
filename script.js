@@ -213,29 +213,101 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// ─── Тулбар форматирования ─────────────────────────────────────────────────
-document.addEventListener('mouseup', function (event) {
-    const sel      = window.getSelection();
-    const toolbar  = document.getElementById('toolbar');
-    const editable = document.querySelector('.editable');
-    if (!toolbar || !editable) return;
-
-    if (sel && sel.toString().length > 0 && editable.contains(sel.anchorNode)) {
-        const rect = sel.getRangeAt(0).getBoundingClientRect();
-        toolbar.style.display = 'flex';
-        toolbar.style.top  = `${rect.top  + window.scrollY - toolbar.offsetHeight - 5}px`;
-        toolbar.style.left = `${rect.left + window.scrollX}px`;
-    } else {
-        toolbar.style.display = 'none';
-    }
-});
-
-document.addEventListener('mousedown', function (event) {
+// Show a compact formatting trigger on selection; open tools only on demand.
+document.addEventListener('DOMContentLoaded', function () {
     const toolbar = document.getElementById('toolbar');
-    if (!toolbar) return;
-    if (!event.target.closest('#toolbar') && !event.target.closest('.editable')) {
+    const editor = document.getElementById('editable');
+    if (!toolbar || !editor) return;
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.id = 'format-trigger';
+    trigger.title = 'Formatting tools';
+    trigger.setAttribute('aria-label', 'Open formatting tools');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>';
+    document.body.appendChild(trigger);
+    let savedRange = null;
+    let open = false;
+    function hide() {
+        open = false;
         toolbar.style.display = 'none';
+        trigger.style.display = 'none';
+        trigger.setAttribute('aria-expanded', 'false');
+        savedRange = null;
     }
+    function position(element, rect, above) {
+        element.style.left = '0px';
+        element.style.top = '0px';
+        element.style.display = element === toolbar ? 'flex' : 'grid';
+        const width = element.offsetWidth;
+        const height = element.offsetHeight;
+        const left = Math.max(10, Math.min(window.scrollX + rect.left, window.scrollX + document.documentElement.clientWidth - width - 10));
+        const desired = above ? rect.top + window.scrollY - height - 9 : rect.bottom + window.scrollY + 9;
+        element.style.left = left + 'px';
+        element.style.top = Math.max(window.scrollY + 8, desired) + 'px';
+    }
+    function selectionRange() {
+        const sel = window.getSelection();
+        if (!sel || sel.isCollapsed || !sel.rangeCount || !sel.toString().trim()) return null;
+        const range = sel.getRangeAt(0);
+        if (!editor.contains(range.commonAncestorContainer)) return null;
+        return range.cloneRange();
+    }
+    function update() {
+        if (open) return;
+        const range = selectionRange();
+        if (!range) { hide(); return; }
+        savedRange = range;
+        position(trigger, range.getBoundingClientRect(), true);
+    }
+    function restoreSelection() {
+        if (!savedRange) return;
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(savedRange);
+    }
+    trigger.addEventListener('mousedown', event => event.preventDefault());
+    trigger.addEventListener('click', function () {
+        if (!savedRange) return;
+        restoreSelection();
+        open = true;
+        trigger.style.display = 'none';
+        trigger.setAttribute('aria-expanded', 'true');
+        position(toolbar, savedRange.getBoundingClientRect(), true);
+    });
+    toolbar.addEventListener('mousedown', function (event) {
+        if (event.target.closest('button')) {
+            event.preventDefault();
+            restoreSelection();
+        }
+    });
+    toolbar.addEventListener('click', function (event) {
+        if (event.target.closest('button')) {
+            // Keep the toolbar available for applying multiple formats.
+            const next = selectionRange();
+            if (next) savedRange = next;
+        }
+    });
+    document.addEventListener('mouseup', event => {
+        if (toolbar.contains(event.target) || trigger.contains(event.target)) return;
+        update();
+    });
+    document.addEventListener('keyup', event => {
+        if (event.target === editor || editor.contains(event.target)) update();
+    });
+    document.addEventListener('mousedown', event => {
+        if (!toolbar.contains(event.target) && !trigger.contains(event.target) && !editor.contains(event.target)) hide();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && (open || trigger.style.display !== 'none')) hide();
+    });
+    editor.addEventListener('input', function () {
+        if (open) hide();
+    });
+    window.addEventListener('scroll', function () {
+        if (open) hide();
+        else if (savedRange) update();
+    }, {passive:true});
 });
 
 // ─── Функции тулбара ───────────────────────────────────────────────────────
