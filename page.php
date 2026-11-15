@@ -93,6 +93,19 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
         }
     })();
     </script>
+<script>
+(function () {
+    // A successful publish redirects here with this one-time marker.
+    var params = new URLSearchParams(window.location.search);
+    var saved = params.get('draft_saved');
+    if (saved === 'create' || /^edit_[a-f0-9]{32}$/.test(saved || '')) {
+        try { sessionStorage.removeItem('twrite_draft_' + saved); } catch (e) {}
+        params.delete('draft_saved');
+        var clean = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+        window.history.replaceState(null, '', clean);
+    }
+})();
+</script>
 </head>
 <body>
 <header class="site-header"><a class="brand" href="/"><span class="brand-mark">t</span>twrite</a><span class="header-right">Write. Share. Simple.</span></header>
