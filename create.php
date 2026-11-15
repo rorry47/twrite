@@ -12,6 +12,13 @@ if (isset($_POST['publish'])) {
         exit();
     }
 
+    // Lightweight per-session publication throttle (supplement with edge/IP limits).
+    if (time() - (int)($_SESSION['last_publish_at'] ?? 0) < 10) {
+        http_response_code(429);
+        header('Retry-After: 10');
+        exit('Please wait before publishing again.');
+    }
+
     $title  = mb_substr(strip_tags(trim($_POST['title']  ?? '')), 0, 100, "UTF-8");
     $author = mb_substr(strip_tags(trim($_POST['author'] ?? '')), 0,  60, "UTF-8");
     $text   = mb_substr($_POST['editable'] ?? '', 0, 100000, "UTF-8");
@@ -44,7 +51,7 @@ if (isset($_POST['publish'])) {
         return strtolower($slug);
     }
 
-    $link      = md5(generateSlug($title));
+    $link      = bin2hex(random_bytes(16));
     $pass_hash = !empty($pass) ? password_hash($pass, PASSWORD_BCRYPT) : '';
     $date_now  = date('Y-m-d H:i:s');
     $ch_delete    = isset($_POST['delete'])    ? '1' : '';
@@ -68,6 +75,7 @@ if (isset($_POST['publish'])) {
             exit('Unable to publish. Please try again.');
         }
         remember_post_owner((int)mysqli_insert_id($link_db), $owner_token);
+        $_SESSION['last_publish_at'] = time();
         mysqli_stmt_close($stmt);
     } else {
         error_log("Prepare error: " . mysqli_error($link_db));
