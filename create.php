@@ -17,18 +17,7 @@ if (isset($_POST['publish'])) {
     $text   = mb_substr($_POST['editable'] ?? '', 0, 100000, "UTF-8");
     $pass   = mb_substr(trim($_POST['password'] ?? ''), 0, 128, "UTF-8");
 
-    $allowed_tags = '<b><i><u><s><a><br><p><pre><code><img><font>';
-    $text = strip_tags($text, $allowed_tags);
-    $text = preg_replace_callback(
-        '/<img\s+src="([^"]+)"[^>]*>/i',
-        function($m) {
-            $src = filter_var($m[1], FILTER_SANITIZE_URL);
-            return preg_match('/^https?:\/\//i', $src)
-                ? '<img src="' . htmlspecialchars($src, ENT_QUOTES, 'UTF-8') . '" alt="Image" style="max-width:100%;height:auto;">'
-                : '';
-        },
-        $text
-    );
+    $text = twrite_sanitize_html($text);
 
     if (empty($title) || empty(trim(strip_tags($text)))) {
         header('Location: /');
