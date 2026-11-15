@@ -326,3 +326,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+
+// Preview locally without submitting or persisting the publication.
+document.addEventListener('DOMContentLoaded', function () {
+    const dialog = document.getElementById('preview-dialog');
+    const open = document.getElementById('preview-post');
+    const close = document.getElementById('close-preview');
+    if (!dialog || !open || !close) return;
+    open.addEventListener('click', function () {
+        document.getElementById('preview-title').textContent = document.getElementById('b_input')?.textContent || 'Untitled';
+        document.getElementById('preview-author').textContent = document.getElementById('a_input')?.textContent || '';
+        const target = document.getElementById('preview-body');
+        target.replaceChildren(...Array.from(document.getElementById('editable').cloneNode(true).childNodes));
+        dialog.showModal();
+    });
+    close.addEventListener('click', function () { dialog.close(); });
+    dialog.addEventListener('click', function (event) { if (event.target === dialog) dialog.close(); });
+});
+
+// Keyboard shortcuts: Cmd/Ctrl+S saves or publishes, Cmd/Ctrl+B formats selection.
+document.addEventListener('keydown', function (event) {
+    if (!(event.ctrlKey || event.metaKey) || event.altKey) return;
+    const form = document.getElementById('formText');
+    if (!form || document.getElementById('preview-dialog')?.open) return;
+    const key = event.key.toLowerCase();
+    if (key === 's') {
+        event.preventDefault();
+        const submit = document.getElementById('publish');
+        if (submit) form.requestSubmit(submit);
+    } else if (key === 'b') {
+        const selection = window.getSelection();
+        const editor = document.getElementById('editable');
+        if (selection && selection.rangeCount && editor && editor.contains(selection.anchorNode)) {
+            event.preventDefault();
+            document.execCommand('bold', false, null);
+        }
+    }
+});
