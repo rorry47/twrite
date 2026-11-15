@@ -158,3 +158,8 @@ body.focus-mode #editable{min-height:60vh}
 .theme-swatch:after{content:'';position:absolute;width:11px;height:11px;right:4px;bottom:4px;border-radius:50%;background:var(--swatch-accent)}
 body.focus-mode .theme-picker{display:none!important}
 @media(max-width:480px){.theme-picker{right:14px;bottom:14px}.theme-picker-menu{width:210px}}
+
+/* Keep published-page actions side by side instead of overlapping. */
+body:has(.copy-post-link) .theme-picker{right:22px;bottom:22px}
+body:has(.copy-post-link) .copy-post-link{right:calc(22px + 104px + 12px);bottom:23px;min-height:38px;max-width:calc(100vw - 160px);white-space:nowrap}
+@media(max-width:480px){body:has(.copy-post-link) .theme-picker{right:14px;bottom:14px}body:has(.copy-post-link) .copy-post-link{right:calc(14px + 104px + 10px);bottom:15px}}
