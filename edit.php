@@ -96,7 +96,7 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     <meta name="twitter:description" content="Simple service for publishing text posts.">
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=2" rel="stylesheet" />
+    <link href="/css/twrite.css?v=3" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
