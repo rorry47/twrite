@@ -168,3 +168,9 @@ body:has(.copy-post-link) .copy-post-link{right:calc(22px + 104px + 12px);bottom
 [data-theme=graphite]{color-scheme:dark;--bg:#24272c;--surface:transparent;--ink:#f2eee9;--muted:#b4a9a0;--line:#48464a;--accent:#e2a76e;--accent-hover:#f3c393;--soft:#343239;--shadow:none;--code:#303138}
 [data-theme=deep-ocean]{color-scheme:dark;--bg:#0b1e2c;--surface:transparent;--ink:#e4f3f6;--muted:#93b5c1;--line:#2a4a5a;--accent:#58bdd1;--accent-hover:#8ad9e5;--soft:#173444;--shadow:none;--code:#142c3b}
 [data-theme=evergreen]{color-scheme:dark;--bg:#10241c;--surface:transparent;--ink:#e6f2e9;--muted:#9db8a7;--line:#2d4c3a;--accent:#8ec6a1;--accent-hover:#b7dfc2;--soft:#1c3829;--shadow:none;--code:#1b3226}
+
+/* Selection formatting: a discreet trigger first, full tools on click. */
+#format-trigger{display:none;position:absolute;z-index:1001;place-items:center;width:32px;height:32px;padding:0;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--accent);box-shadow:0 5px 20px rgba(0,0,0,.12);font-size:14px;cursor:pointer}
+#format-trigger:hover{border-color:var(--accent);background:var(--soft)}
+#format-trigger:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#toolbar{z-index:1002}
