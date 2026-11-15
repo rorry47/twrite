@@ -1,5 +1,5 @@
 // ─── Синхронизация hidden inputs перед отправкой ───────────────────────────
-document.getElementById('formText')?.addEventListener('submit', function () {
+document.getElementById('formText')?.addEventListener('submit', function (event) {
     const titleEl    = document.getElementById('b_input');
     const authorEl   = document.getElementById('a_input');
     const editableEl = document.getElementById('editable');
@@ -7,6 +7,25 @@ document.getElementById('formText')?.addEventListener('submit', function () {
     document.getElementById('titleInput').value    = titleEl    ? titleEl.textContent    : '';
     document.getElementById('authorInput').value   = authorEl   ? authorEl.textContent   : '';
     document.getElementById('editableInput').value = editableEl ? editableEl.innerHTML   : '';
+
+    // Keep the current editor intact when required fields are missing.
+    const title = titleEl ? titleEl.textContent.trim() : '';
+    const body = editableEl ? editableEl.textContent.trim() : '';
+    const invalid = !title ? titleEl : (!body && !editableEl?.querySelector('img') ? editableEl : null);
+    if (invalid) {
+        event.preventDefault();
+        invalid.focus();
+        invalid.setAttribute('aria-invalid', 'true');
+        invalid.style.outline = '2px solid #dc3545';
+        invalid.style.outlineOffset = '4px';
+        invalid.addEventListener('input', function clearInvalid() {
+            invalid.removeAttribute('aria-invalid');
+            invalid.style.outline = '';
+            invalid.style.outlineOffset = '';
+            invalid.removeEventListener('input', clearInvalid);
+        });
+        window.alert(!title ? 'Enter a publication title.' : 'Enter publication text.');
+    }
 });
 
 // ─── Per-tab drafts: isolated by editor mode and post slug ──────────────
