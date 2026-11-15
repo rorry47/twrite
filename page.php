@@ -84,7 +84,7 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=2" rel="stylesheet" />
+    <link href="/css/twrite.css?v=3" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
