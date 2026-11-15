@@ -288,30 +288,97 @@ function toggleSpoiler(element) {
     }
 }
 
-// ─── Тёмная тема ───────────────────────────────────────────────────────────
+// Theme selector shared by editor, reader and locked publications.
 (function () {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.setAttribute('data-theme', 'dark');
+    const themes = [
+        {id:'light', label:'Paper', colors:['#faf9f6','#a69abf']},
+        {id:'dark', label:'Midnight', colors:['#17191f','#b1aace']},
+        {id:'black', label:'OLED Black', colors:['#08090c','#9eabff']},
+        {id:'sepia', label:'Sepia', colors:['#f4ead7','#a16d42']},
+        {id:'rose', label:'Rose', colors:['#fff3f5','#ce708e']},
+        {id:'ocean', label:'Ocean', colors:['#eaf5f7','#277f91']},
+        {id:'forest', label:'Forest', colors:['#eaf2e9','#477f62']}
+    ];
+    function initialTheme() {
+        let saved = null;
+        try { saved = localStorage.getItem('theme'); } catch (e) {}
+        if (themes.some(t => t.id === saved)) return saved;
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-})();
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Published pages already render their own theme toggle.
-    if (document.getElementById('theme-toggle')) return;
-    const btn = document.createElement('button');
-    btn.id        = 'theme-toggle';
-    btn.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
-    btn.title     = 'Toggle dark mode';
-    document.body.appendChild(btn);
-
-    btn.addEventListener('click', function () {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    function applyTheme(id) {
+        document.documentElement.setAttribute('data-theme', id);
+        try { localStorage.setItem('theme', id); } catch (e) {}
+        document.querySelectorAll('[data-theme-option]').forEach(button => {
+            const selected = button.dataset.themeOption === id;
+            button.setAttribute('aria-checked', String(selected));
+            button.classList.toggle('selected', selected);
+        });
+    }
+    applyTheme(initialTheme());
+    document.addEventListener('DOMContentLoaded', function () {
+        const existing = document.getElementById('theme-toggle');
+        if (existing) existing.remove();
+        const picker = document.createElement('div');
+        picker.className = 'theme-picker';
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.id = 'theme-toggle';
+        trigger.className = 'theme-picker-trigger';
+        trigger.setAttribute('aria-label', 'Choose color theme');
+        trigger.setAttribute('aria-haspopup', 'true');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.innerHTML = '<i class="fa-solid fa-palette" aria-hidden="true"></i><span>Themes</span>';
+        const menu = document.createElement('div');
+        menu.className = 'theme-picker-menu';
+        menu.setAttribute('role', 'radiogroup');
+        menu.setAttribute('aria-label', 'Color theme');
+        menu.hidden = true;
+        const heading = document.createElement('div');
+        heading.className = 'theme-picker-heading';
+        heading.textContent = 'Appearance';
+        menu.appendChild(heading);
+        themes.forEach(theme => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'theme-picker-option';
+            button.dataset.themeOption = theme.id;
+            button.setAttribute('role', 'radio');
+            const swatch = document.createElement('span');
+            swatch.className = 'theme-swatch';
+            swatch.style.setProperty('--swatch-bg', theme.colors[0]);
+            swatch.style.setProperty('--swatch-accent', theme.colors[1]);
+            const name = document.createElement('span');
+            name.textContent = theme.label;
+            const check = document.createElement('i');
+            check.className = 'fa-solid fa-check';
+            check.setAttribute('aria-hidden', 'true');
+            button.append(swatch, name, check);
+            button.addEventListener('click', () => {
+                applyTheme(theme.id);
+                setOpen(false);
+                trigger.focus();
+            });
+            menu.appendChild(button);
+        });
+        picker.append(trigger, menu);
+        document.body.appendChild(picker);
+        function setOpen(open) {
+            menu.hidden = !open;
+            trigger.setAttribute('aria-expanded', String(open));
+        }
+        trigger.addEventListener('click', () => setOpen(menu.hidden));
+        document.addEventListener('pointerdown', event => {
+            if (!picker.contains(event.target)) setOpen(false);
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !menu.hidden) {
+                setOpen(false);
+                trigger.focus();
+            }
+        });
+        applyTheme(initialTheme());
     });
-});
-
+})();
 
 // Generate a cryptographically secure password without sending it anywhere.
 document.addEventListener('DOMContentLoaded', function () {
