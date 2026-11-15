@@ -96,7 +96,7 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     <meta name="twitter:description" content="Simple service for publishing text posts.">
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=11" rel="stylesheet" />
+    <link href="/css/twrite.css?v=12" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -115,8 +115,8 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     <input type="hidden" name="title" id="titleInput">
     <div class="a_input" id="a_input" contenteditable="true" data-name="author" data-placeholder="Author"><?php echo htmlspecialchars($edit_page['author'], ENT_QUOTES, 'UTF-8'); ?></div>
     <input type="hidden" name="author" id="authorInput">
-    <div class="editor-divider"></div>
-    <div id="toolbar">
+    <div class="editor-divider"><button type="button" id="format-trigger" aria-controls="toolbar" aria-expanded="false" aria-label="Toggle formatting tools" title="Formatting tools"><i class="fa-solid fa-sliders" aria-hidden="true"></i></button></div>
+    <div id="toolbar" aria-label="Text formatting tools">
         <button type="button" onclick="document.execCommand('bold', false, '');"><i class="fa-solid fa-bold"></i></button>
         <button type="button" onclick="document.execCommand('italic', false, '');"><i class="fa-solid fa-italic"></i></button>
         <button type="button" onclick="document.execCommand('underline', false, '');"><i class="fa-solid fa-underline"></i></button>
@@ -159,7 +159,7 @@ $csrf_token_edit = $_SESSION['csrf_token'];
 </form>
 <dialog id="preview-dialog" class="preview-dialog" aria-label="Publication preview"><div class="preview-top"><span>Preview</span><button type="button" id="close-preview" aria-label="Close preview"><i class="fa-solid fa-xmark"></i></button></div><article class="reading-page"><h1 id="preview-title"></h1><div id="preview-author"></div><div id="preview-body"></div></article></dialog>
 </div>
-<script src="/script.js?v=12"></script>
+<script src="/script.js?v=13"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
