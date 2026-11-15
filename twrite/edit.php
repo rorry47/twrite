@@ -5,38 +5,27 @@ if (in_array(basename($url_path), ['edit.php'])) {
     exit();
 }
 
-// Проверяем что сессия редактирования валидна
-if (empty($_SESSION['edit']) || empty($_SESSION['hash'])) {
-    header('Location: /');
-    exit();
+// Explicit post-specific editing route; no shared edit/temp session state.
+$edit_slug = $_GET['edit'] ?? '';
+if (!is_string($edit_slug) || !preg_match('/^[a-f0-9]{32}$/', $edit_slug)) {
+    http_response_code(404); exit('Post not found');
 }
-
-// Получаем пост
-$stmt = mysqli_prepare($link_db, "SELECT * FROM `content` WHERE `id` = ? LIMIT 1");
-if (!$stmt) { header('Location: /'); exit(); }
-mysqli_stmt_bind_param($stmt, 'i', $_SESSION['edit']);
+$stmt = mysqli_prepare($link_db, "SELECT * FROM content WHERE link = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, 's', $edit_slug);
 mysqli_stmt_execute($stmt);
-$result    = mysqli_stmt_get_result($stmt);
-$edit_page = $result->fetch_assoc();
+$edit_page = mysqli_stmt_get_result($stmt)->fetch_assoc();
 mysqli_stmt_close($stmt);
-
-// Проверяем что hash совпадает — только создатель поста может редактировать
-if (!$edit_page || $edit_page['hash'] !== $_SESSION['hash']) {
-    unset($_SESSION['edit'], $_SESSION['temp'], $_SESSION['hash']);
-    header('Location: /');
-    exit();
+if (!$edit_page || !is_post_owner($edit_page)) {
+    http_response_code(403); exit('Editing access unavailable for this browser');
 }
-
-// Помечаем что форма была показана
-$_SESSION['temp'] = '1';
+$csrf_token_edit = $_SESSION['csrf_token'];
 
 // ── ОБРАБОТКА POST ───────────────────────────────────────────────────────────
 if (isset($_POST['publish'])) {
-    if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token_edit'] ?? '', $_POST['csrf_token'])) {
+    if (!csrf_valid()) {
         header('Location: /');
         exit();
     }
-    unset($_SESSION['csrf_token_edit']);
 
     $title  = mb_substr(strip_tags(trim($_POST['title']  ?? '')), 0, 100, "UTF-8");
     $author = mb_substr(strip_tags(trim($_POST['author'] ?? '')), 0,  60, "UTF-8");
@@ -66,10 +55,9 @@ if (isset($_POST['publish'])) {
             ? $edit_page['pass']
             : password_hash($pass, PASSWORD_BCRYPT);
     } else {
-        $pass_hash = '';
+        $pass_hash = $edit_page['pass'];
     }
 
-    $date_now     = date('Y-m-d H:i:s');
     $ch_delete    = isset($_POST['delete'])    ? '1' : '';
     $ch_access_ip = isset($_POST['access_ip']) ? $user_ip : '';
     $orig_hash    = $edit_page['hash'];
@@ -77,34 +65,34 @@ if (isset($_POST['publish'])) {
 
     $stmt = mysqli_prepare($link_db,
         "UPDATE `content` SET
-            `name`   = ?, `author` = ?, `text` = ?, `date` = ?,
+            `name`   = ?, `author` = ?, `text` = ?,
             `pass`   = ?, `ip`     = ?, `del`  = ?
          WHERE `id` = ? AND `hash` = ?"
     );
     if ($stmt) {
-        mysqli_stmt_bind_param($stmt, 'sssssssss',
-            $title, $author, $text, $date_now,
+        mysqli_stmt_bind_param($stmt, 'ssssssis',
+            $title, $author, $text,
             $pass_hash, $ch_access_ip, $ch_delete,
             $post_id, $orig_hash
         );
         if (!mysqli_stmt_execute($stmt)) {
             error_log("Update error: " . mysqli_stmt_error($stmt));
+            http_response_code(500); exit('Unable to save changes');
         }
         mysqli_stmt_close($stmt);
     } else {
         error_log("Prepare error: " . mysqli_error($link_db));
+        http_response_code(500); exit('Unable to save changes');
     }
 
     // Сохраняем hash в сессии — юзер остаётся владельцем после редактирования
     // unset только edit и temp, hash оставляем
-    unset($_SESSION['edit'], $_SESSION['temp']);
     header('Location: /' . $edit_page['link']);
     exit();
 }
 
 // ── Генерируем CSRF токен ────────────────────────────────────────────────────
-$csrf_token_edit = bin2hex(random_bytes(32));
-$_SESSION['csrf_token_edit'] = $csrf_token_edit;
+$csrf_token_edit = $_SESSION['csrf_token'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -132,7 +120,7 @@ $_SESSION['csrf_token_edit'] = $csrf_token_edit;
 </head>
 <body>
 <div class="content">
-<form id="formText" method="post" action="/">
+<form id="formText" method="post" action="/?edit=<?php echo rawurlencode($edit_page['link']); ?>">
     <div class="b_input" id="b_input" contenteditable="true" data-name="title" data-placeholder="Title"><?php echo htmlspecialchars($edit_page['name'], ENT_QUOTES, 'UTF-8'); ?></div>
     <input type="hidden" name="title" id="titleInput">
     <div class="a_input" id="a_input" contenteditable="true" data-name="author" data-placeholder="Author"><?php echo htmlspecialchars($edit_page['author'], ENT_QUOTES, 'UTF-8'); ?></div>

@@ -22,32 +22,28 @@ if (!empty($row_page['ip']) && $row_page['ip'] !== $user_ip) {
     exit();
 }
 
-$is_owner  = !empty($_SESSION['hash']) && $row_page['hash'] === $_SESSION['hash'];
+$is_owner  = is_post_owner($row_page);
 $is_locked = !empty($row_page['pass']);
 $pass_ok   = $is_locked
              && !empty($_SESSION['pass_' . $row_page['id']])
-             && password_verify($_SESSION['pass_' . $row_page['id']], $row_page['pass']);
+             ;
 
 // ── ОБРАБОТКА POST (до рендера!) ────────────────────────────────────────────
 
 // Кнопка Edit
 if (isset($_POST['edit']) && $is_owner) {
-    if (!empty($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token_edit'] ?? '', $_POST['csrf_token'])) {
-        unset($_SESSION['csrf_token_edit']);
-        $_SESSION['edit'] = $row_page['id'];
-        unset($_SESSION['temp']);
-        header('Location: /');
+    if (csrf_valid()) {
+        header('Location: /?edit=' . rawurlencode($row_page['link']));
         exit();
     }
 }
 
 // Форма пароля
 if (isset($_POST['send'])) {
-    if (!empty($_POST['csrf_token']) && hash_equals($_SESSION['csrf_token_pass'] ?? '', $_POST['csrf_token'])) {
-        unset($_SESSION['csrf_token_pass']);
+    if (csrf_valid()) {
         $entered = mb_substr($_POST['pass'] ?? '', 0, 128, "UTF-8");
         if (password_verify($entered, $row_page['pass'])) {
-            $_SESSION['pass_' . $row_page['id']] = $entered;
+            $_SESSION['pass_' . $row_page['id']] = true;
         }
     }
     header('Location: /' . $url);
@@ -55,10 +51,8 @@ if (isset($_POST['send'])) {
 }
 
 // Генерируем CSRF токены для форм на странице
-$csrf_token_edit = bin2hex(random_bytes(32));
-$_SESSION['csrf_token_edit'] = $csrf_token_edit;
-$csrf_token_pass = bin2hex(random_bytes(32));
-$_SESSION['csrf_token_pass'] = $csrf_token_pass;
+$csrf_token_edit = $_SESSION['csrf_token'];
+$csrf_token_pass = $_SESSION['csrf_token'];
 
 function render_meta(string $title, string $description, string $project): void {
     $t = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');

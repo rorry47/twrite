@@ -1,5 +1,5 @@
 // ─── Синхронизация hidden inputs перед отправкой ───────────────────────────
-document.getElementById('formText').addEventListener('submit', function () {
+document.getElementById('formText')?.addEventListener('submit', function () {
     const titleEl    = document.getElementById('b_input');
     const authorEl   = document.getElementById('a_input');
     const editableEl = document.getElementById('editable');
@@ -45,17 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// ─── Очищаем sessionStorage при submit ────────────────────────────────────
-document.getElementById('formText').addEventListener('submit', function () {
-    document.querySelectorAll('textarea, input, div[contenteditable="true"]').forEach(function (e) {
-        const key = e.getAttribute('data-name') || e.getAttribute('name');
-        if (key) {
-            window.sessionStorage.removeItem(key);
-            window.sessionStorage.removeItem('edit_' + key);
-        }
-    });
-});
-
+// ─── Preserve drafts on submit; server errors must not destroy work ─────────
 // ─── Placeholder для contenteditable ──────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('div[contenteditable="true"]').forEach(function (div) {
