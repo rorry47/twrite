@@ -268,16 +268,83 @@ function formatHeading(tag) {
 }
 
 // Insert a small editable table at the current caret/selection.
-function insertTable() {
-    const rowsInput = window.prompt('Number of rows (1–12):', '3');
-    if (rowsInput === null) return;
-    const colsInput = window.prompt('Number of columns (1–8):', '3');
-    if (colsInput === null) return;
-    if (!/^(?:[1-9]|1[0-2])$/.test(rowsInput.trim()) || !/^[1-8]$/.test(colsInput.trim())) {
-        window.alert('Enter 1–12 rows and 1–8 columns.');
-        return;
+// A compact 8 × 12 hover grid, anchored to the table button.
+document.addEventListener('DOMContentLoaded', function () {
+    const button = document.getElementById('insert-table-button');
+    const editor = document.getElementById('editable');
+    if (!button || !editor) return;
+    const wrapper = button.parentElement;
+    const picker = document.createElement('div');
+    picker.className = 'table-grid-picker';
+    picker.id = 'table-grid-picker';
+    picker.hidden = true;
+    picker.setAttribute('role', 'group');
+    picker.setAttribute('aria-label', 'Select table dimensions');
+    const label = document.createElement('div');
+    label.className = 'table-grid-label';
+    label.textContent = 'Select table size';
+    const grid = document.createElement('div');
+    grid.className = 'table-grid-cells';
+    const cells = [];
+    let selectedRows = 0, selectedCols = 0;
+    function highlight(rows, cols) {
+        selectedRows = rows;
+        selectedCols = cols;
+        cells.forEach(cell => {
+            cell.classList.toggle('selected', Number(cell.dataset.row) <= rows && Number(cell.dataset.col) <= cols);
+        });
+        label.textContent = rows && cols ? cols + ' × ' + rows : 'Select table size';
     }
-    const rows = Number(rowsInput), cols = Number(colsInput);
+    function close() {
+        picker.hidden = true;
+        button.setAttribute('aria-expanded', 'false');
+    }
+    for (let row = 1; row <= 12; row++) {
+        for (let col = 1; col <= 8; col++) {
+            const cell = document.createElement('button');
+            cell.type = 'button';
+            cell.className = 'table-grid-cell';
+            cell.dataset.row = String(row);
+            cell.dataset.col = String(col);
+            cell.setAttribute('aria-label', col + ' columns, ' + row + ' rows');
+            cell.addEventListener('pointerenter', () => highlight(row, col));
+            cell.addEventListener('focus', () => highlight(row, col));
+            cell.addEventListener('mousedown', event => event.preventDefault());
+            cell.addEventListener('click', () => {
+                close();
+                insertTable(row, col);
+            });
+            cells.push(cell);
+            grid.appendChild(cell);
+        }
+    }
+    picker.appendChild(label);
+    picker.appendChild(grid);
+    wrapper.appendChild(picker);
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', picker.id);
+    button.addEventListener('click', () => {
+        const wasOpen = !picker.hidden;
+        close();
+        if (!wasOpen) {
+            picker.hidden = false;
+            button.setAttribute('aria-expanded', 'true');
+            highlight(0, 0);
+        }
+    });
+    document.addEventListener('pointerdown', event => {
+        if (!picker.contains(event.target) && !button.contains(event.target)) close();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !picker.hidden) {
+            close();
+            button.focus();
+        }
+    });
+});
+
+function insertTable(rows, cols) {
+    if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows < 1 || rows > 12 || cols < 1 || cols > 8) return;
     if (typeof window.twriteRestoreEditorSelection === 'function') window.twriteRestoreEditorSelection();
     let html = '<table><tbody>';
     for (let row = 0; row < rows; row++) {
