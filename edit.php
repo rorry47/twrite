@@ -96,7 +96,6 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     <meta name="twitter:description" content="Simple service for publishing text posts.">
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/edit.css" rel="stylesheet" />
     <link href="/css/twrite.css?v=2" rel="stylesheet" />
     <script>
     (function(){
@@ -110,8 +109,8 @@ $csrf_token_edit = $_SESSION['csrf_token'];
 <body>
 <header class="site-header"><a class="brand" href="/"><span class="brand-mark">t</span>twrite</a><span class="header-right">Write. Share. Simple.</span></header>
 <div class="content">
-<form id="formText" method="post" action="/?edit=<?php echo rawurlencode($edit_page['link']); ?>
-    <div class="editor-eyebrow"> Editing your post</div>">
+<form id="formText" method="post" action="/?edit=<?php echo rawurlencode($edit_page['link']); ?>">
+    <div class="editor-eyebrow">Editing your post</div>
     <div class="b_input" id="b_input" contenteditable="true" data-name="title" data-placeholder="Title"><?php echo htmlspecialchars($edit_page['name'], ENT_QUOTES, 'UTF-8'); ?></div>
     <input type="hidden" name="title" id="titleInput">
     <div class="a_input" id="a_input" contenteditable="true" data-name="author" data-placeholder="Author"><?php echo htmlspecialchars($edit_page['author'], ENT_QUOTES, 'UTF-8'); ?></div>
