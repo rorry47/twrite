@@ -49,6 +49,7 @@ header('X-Frame-Options: SAMEORIGIN');
 header('X-XSS-Protection: 1; mode=block');
 
 $name_project = "twrite"; //name
+require_once __DIR__ . '/sanitize.php';
 
 $p_page_block = ['index.php', 'create.php', 'edit.php', 'page.php', '403.php', '404.php'];
 $url_path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
