@@ -96,7 +96,6 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/edit.css" rel="stylesheet" />
     <link href="/css/twrite.css?v=2" rel="stylesheet" />
     <script>
     (function(){
