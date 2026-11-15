@@ -10,9 +10,33 @@ session_cache_expire(0);
 ini_set('session.cookie_secure',   $is_https ? '1' : '0');
 ini_set('session.cookie_httponly', '1');
 ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.cookie_lifetime', 1800);
+ini_set('session.cookie_lifetime', 0);
 ini_set('session.use_strict_mode', '1');
 session_start();
+
+// Stable per-form CSRF token, shared across tabs without overwriting.
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+function csrf_valid(): bool {
+    return isset($_POST['csrf_token']) && is_string($_POST['csrf_token'])
+        && hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token']);
+}
+function owner_cookie_name(int $id): string { return 'tw_owner_' . $id; }
+function is_post_owner(array $post): bool {
+    $token = $_COOKIE[owner_cookie_name((int)$post['id'])] ?? '';
+    if (is_string($token) && $token !== '' && hash_equals($post['hash'], hash('sha256', $token))) return true;
+    // Legacy owner sessions are accepted only for posts created before the migration.
+    return !empty($_SESSION['hash']) && hash_equals($post['hash'], $_SESSION['hash']);
+}
+function remember_post_owner(int $id, string $token): void {
+    setcookie(owner_cookie_name($id), $token, [
+        'expires' => time() + 31536000, 'path' => '/',
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'httponly' => true, 'samesite' => 'Strict'
+    ]);
+}
+
 
 mb_internal_encoding("UTF-8");
 mb_http_output("UTF-8");
@@ -56,7 +80,11 @@ $user_ip = getUserIP();
 $url = preg_replace('/[^a-zA-Z0-9\-]/', '', parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH));
 
 if (empty($url)) {
-    include("create.php");
+    if (isset($_GET['edit']) && is_string($_GET['edit'])) {
+        include('edit.php');
+    } else {
+        include("create.php");
+    }
 } else {
     $stmt = mysqli_prepare($link_db, "SELECT COUNT(*) FROM content WHERE link = ?");
     if ($stmt) {
