@@ -98,7 +98,7 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=11" rel="stylesheet" />
+    <link href="/css/twrite.css?v=12" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -175,7 +175,7 @@ endif;
     </div>
 </div>
 
-<script src="/script.js?v=12"></script>
+<script src="/script.js?v=13"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
