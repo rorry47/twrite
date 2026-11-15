@@ -5,25 +5,12 @@ if (in_array(basename($url_path), ['create.php'])) {
     exit();
 }
 
-// Если есть активная сессия редактирования
-if (!empty($_SESSION['edit'])) {
-    // temp=1 означает что edit форма уже была показана и сабмит прошёл (или юзер ушёл)
-    // Но НЕ сбрасываем если это POST от edit формы!
-    if (!empty($_SESSION['temp']) && !isset($_POST['publish'])) {
-        unset($_SESSION['edit'], $_SESSION['temp']);
-    } else {
-        include("edit.php");
-        exit();
-    }
-}
-
 // ── ОБРАБОТКА POST ───────────────────────────────────────────────────────────
 if (isset($_POST['publish'])) {
-    if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    if (!csrf_valid()) {
         header('Location: /');
         exit();
     }
-    unset($_SESSION['csrf_token']);
 
     $title  = mb_substr(strip_tags(trim($_POST['title']  ?? '')), 0, 100, "UTF-8");
     $author = mb_substr(strip_tags(trim($_POST['author'] ?? '')), 0,  60, "UTF-8");
@@ -75,8 +62,8 @@ if (isset($_POST['publish'])) {
     $ch_access_ip = isset($_POST['access_ip']) ? $user_ip : '';
 
     // hash привязан к сессии — только создатель может редактировать
-    $hash = hash('sha256', session_id() . $date_now . $user_ip . bin2hex(random_bytes(8)));
-    $_SESSION['hash'] = $hash;
+    $owner_token = bin2hex(random_bytes(32));
+    $hash = hash('sha256', $owner_token);
 
     $stmt = mysqli_prepare($link_db,
         "INSERT INTO `content` (`id`,`name`,`link`,`author`,`text`,`date`,`pass`,`ip`,`del`,`hash`)
@@ -88,10 +75,15 @@ if (isset($_POST['publish'])) {
         );
         if (!mysqli_stmt_execute($stmt)) {
             error_log("Insert error: " . mysqli_stmt_error($stmt));
+            http_response_code(500);
+            exit('Unable to publish. Please try again.');
         }
+        remember_post_owner((int)mysqli_insert_id($link_db), $owner_token);
         mysqli_stmt_close($stmt);
     } else {
         error_log("Prepare error: " . mysqli_error($link_db));
+        http_response_code(500);
+        exit('Unable to publish. Please try again.');
     }
 
     header('Location: /' . $link);
@@ -99,8 +91,7 @@ if (isset($_POST['publish'])) {
 }
 
 // ── Генерируем CSRF токен ────────────────────────────────────────────────────
-$csrf_token = bin2hex(random_bytes(32));
-$_SESSION['csrf_token'] = $csrf_token;
+$csrf_token = $_SESSION['csrf_token'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
