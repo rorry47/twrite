@@ -75,7 +75,7 @@ if (isset($_POST['publish'])) {
         exit('Unable to publish. Please try again.');
     }
 
-    header('Location: /' . $link);
+    header('Location: /' . $link . '?draft_saved=create');
     exit();
 }
 
