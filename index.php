@@ -49,6 +49,9 @@ header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
 header('X-XSS-Protection: 0');
+// Start CSP in report-only mode: existing inline editor handlers/styles need migration
+// before a strict enforced policy can be enabled safely.
+header("Content-Security-Policy-Report-Only: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: http: data:; font-src 'self' data:; connect-src 'self'");
 
 $name_project = "twrite"; //name
 require_once __DIR__ . '/sanitize.php';
