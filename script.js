@@ -250,9 +250,6 @@ document.addEventListener('DOMContentLoaded', function () {
     toolbar.addEventListener('change', event => {
         if (event.target.matches('select')) restoreSelection();
     });
-    document.addEventListener('mousedown', event => {
-        if (!toolbar.contains(event.target) && !trigger.contains(event.target)) setOpen(false);
-    });
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && toolbar.classList.contains('is-open')) {
             setOpen(false);
