@@ -156,7 +156,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <div class="editor-actions"><span class="editor-hint"><i class="fa-solid fa-shield-halved"></i> Your draft is saved in this tab</span><button class="btns" name="publish" id="publish" type="submit"><i class="fa-regular fa-paper-plane"></i> Publish</button></div>
 </form>
 </div>
-<script src="/script.js?v=4"></script>
+<script src="/script.js?v=5"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
