@@ -85,6 +85,7 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
     <link href="/css/general.css" rel="stylesheet" />
+    <link href="/css/twrite.css?v=2" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -95,15 +96,18 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
     </script>
 </head>
 <body>
+<header class="site-header"><a class="brand" href="/"><span class="brand-mark">t</span>twrite</a><span class="header-right">Write. Share. Simple.</span></header>
 
 <?php if ($is_locked && !$pass_ok): ?>
 <div class="content">
+    <div class="locked-page"><div class="lock-icon"><i class="fa-solid fa-lock"></i></div><h1>Protected publication</h1><p>Enter the password to read this post.</p>
     <form method="post">
         <input type="hidden" name="csrf_token" value="<?php echo $csrf_token_pass; ?>">
         <input type="password" name="pass" placeholder="Password" autocomplete="current-password">
-        <button class="btns" name="send" type="submit"><i class="fa-solid fa-unlock"></i> Unlock</button>
-    </form>
+        <button class="btns" name="send" type="submit"><i class="fa-solid fa-unlock"></i> Unlock publication</button>
+    </form></div>
 </div>
+<footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
 <?php
@@ -112,6 +116,7 @@ endif;
 ?>
 
 <div class="content">
+    <div class="reading-page"><div class="editor-eyebrow">Published note</div>
     <div class="b_input" id="b_input"><?php echo htmlspecialchars($row_page['name'], ENT_QUOTES, 'UTF-8'); ?></div>
     <?php if (!empty($row_page['author'])): ?>
     <div class="a_input" id="a_input"><i class="fa-solid fa-at"></i> <?php echo htmlspecialchars($row_page['author'], ENT_QUOTES, 'UTF-8'); ?></div>
@@ -125,6 +130,7 @@ endif;
         <button class="btns" name="edit" type="submit"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
     </form>
     <?php endif; ?>
+    </div>
 </div>
 
 <script src="/script.js"></script>
