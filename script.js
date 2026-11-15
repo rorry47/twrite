@@ -2,7 +2,7 @@
 function twriteSanitizeDraft(html) {
     const template = document.createElement('template');
     template.innerHTML = html;
-    const allowed = new Set(['B','STRONG','I','EM','U','S','STRIKE','A','BR','P','DIV','PRE','CODE','IMG','FONT','SPAN','UL','OL','LI','BLOCKQUOTE']);
+    const allowed = new Set(['B','STRONG','I','EM','U','S','STRIKE','A','BR','P','DIV','PRE','CODE','IMG','FONT','SPAN','UL','OL','LI','BLOCKQUOTE','H2','H3','H4','TABLE','THEAD','TBODY','TR','TH','TD']);
     const blocked = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','SVG','MATH','FORM','INPUT','BUTTON','TEXTAREA','TEMPLATE','VIDEO','AUDIO','BASE','META','LINK']);
     function safeUrl(value) {
         try {
@@ -233,6 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
         selection.removeAllRanges();
         selection.addRange(savedRange);
     }
+    window.twriteRestoreEditorSelection = restoreSelection;
     function setOpen(open) {
         toolbar.classList.toggle('is-open', open);
         trigger.setAttribute('aria-expanded', String(open));
@@ -257,6 +258,37 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
+// Heading styles use semantic block elements so they survive publication.
+function formatHeading(tag) {
+    if (!['h2', 'h3', 'h4', 'p'].includes(tag)) return;
+    if (typeof window.twriteRestoreEditorSelection === 'function') window.twriteRestoreEditorSelection();
+    document.execCommand('formatBlock', false, tag);
+    document.getElementById('editable')?.dispatchEvent(new Event('input', {bubbles: true}));
+}
+
+// Insert a small editable table at the current caret/selection.
+function insertTable() {
+    const rowsInput = window.prompt('Number of rows (1–12):', '3');
+    if (rowsInput === null) return;
+    const colsInput = window.prompt('Number of columns (1–8):', '3');
+    if (colsInput === null) return;
+    if (!/^(?:[1-9]|1[0-2])$/.test(rowsInput.trim()) || !/^[1-8]$/.test(colsInput.trim())) {
+        window.alert('Enter 1–12 rows and 1–8 columns.');
+        return;
+    }
+    const rows = Number(rowsInput), cols = Number(colsInput);
+    if (typeof window.twriteRestoreEditorSelection === 'function') window.twriteRestoreEditorSelection();
+    let html = '<table><tbody>';
+    for (let row = 0; row < rows; row++) {
+        html += '<tr>';
+        for (let col = 0; col < cols; col++) html += row === 0 ? '<th><br></th>' : '<td><br></td>';
+        html += '</tr>';
+    }
+    html += '</tbody></table><p><br></p>';
+    document.execCommand('insertHTML', false, html);
+    document.getElementById('editable')?.dispatchEvent(new Event('input', {bubbles: true}));
+}
 
 // ─── Функции тулбара ───────────────────────────────────────────────────────
 function changeFontSize(size) {
