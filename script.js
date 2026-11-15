@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.generate-password').forEach(function (button) {
         button.addEventListener('click', function () {
-            const input = button.parentElement.querySelector('input[name="password"]');
+            const input = button.closest('.password-field')?.querySelector('input[name="password"]');
             if (!input || !window.crypto || !window.crypto.getRandomValues) return;
             const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_';
             const limit = Math.floor(256 / alphabet.length) * alphabet.length;
