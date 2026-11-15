@@ -174,3 +174,14 @@ body:has(.copy-post-link) .copy-post-link{right:calc(22px + 104px + 12px);bottom
 #format-trigger:hover{border-color:var(--accent);background:var(--soft)}
 #format-trigger:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #toolbar{z-index:1002}
+
+/* Formatting control anchored to the right end of the title/body separator. */
+#formText .editor-divider{position:relative;display:flex;align-items:center;justify-content:flex-end;height:1px;overflow:visible}
+#formText #format-trigger{position:relative;top:0;left:auto;display:grid;flex:none;width:34px;height:34px;margin-right:0;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--muted);box-shadow:none;font-size:14px;transition:color .15s,border-color .15s,background .15s}
+#formText #format-trigger:hover,#formText #format-trigger.is-active{color:var(--accent);border-color:var(--accent);background:var(--soft)}
+#formText #toolbar{position:relative;top:auto!important;left:auto!important;display:flex;visibility:hidden;opacity:0;max-height:0;overflow:hidden;width:100%;max-width:100%;margin:0;padding:0;border:0;border-radius:10px;background:var(--soft);color:var(--ink);box-shadow:none;gap:3px;pointer-events:none;transition:opacity .18s ease,max-height .22s ease,margin .22s ease,padding .22s ease}
+#formText #toolbar.is-open{visibility:visible;opacity:1;max-height:180px;margin:-9px 0 22px;padding:8px;overflow:visible;pointer-events:auto}
+#formText #toolbar button,#formText #toolbar select{color:var(--ink);background:transparent}
+#formText #toolbar button:hover,#formText #toolbar select:hover{background:var(--bg)}
+#formText #toolbar select option{background:var(--bg);color:var(--ink)}
+@media(max-width:600px){#formText #toolbar.is-open{max-height:260px}}
