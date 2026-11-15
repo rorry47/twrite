@@ -97,3 +97,11 @@ body{background:var(--bg);font-size:16px;line-height:1.85}
 .generate-password:hover{background:var(--line)}
 .generate-password:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media(max-width:420px){.generate-password span{display:none}.generate-password{width:40px;padding:0}}
+
+/* Inline password actions */
+.password-field{position:relative;display:block;max-width:440px}
+.spoiler-content .password-field input[type=password],.spoiler-content .password-field input[type=text]{display:block;width:100%;max-width:none;min-height:42px;padding:10px 86px 10px 12px;box-sizing:border-box}
+.password-controls{position:absolute;right:5px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:2px}
+.password-controls .generate-password,.password-controls .copy-password{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-height:0;padding:0;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:14px;cursor:pointer}
+.password-controls .generate-password:hover,.password-controls .copy-password:hover{background:var(--soft);color:var(--accent)}
+.password-controls button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
