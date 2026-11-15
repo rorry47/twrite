@@ -1,0 +1,4 @@
+# Database credentials and local secrets
+.env
+.env.*
+!.env.example
