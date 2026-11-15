@@ -107,7 +107,7 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     </script>
 </head>
 <body>
-<header class="site-header"><a class="brand" href="/"><span class="brand-mark">t</span>twrite</a><span class="header-right">Write. Share. Simple.</span></header>
+<header class="site-header"><a class="brand" href="/"><span class="brand-mark"><?php echo htmlspecialchars(mb_substr($name_project, 0, 1, "UTF-8"), ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></span><?php echo htmlspecialchars($name_project, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></a><span class="header-right">Write. Share. Simple.</span></header>
 <div class="content">
 <form id="formText" method="post" action="/?edit=<?php echo rawurlencode($edit_page['link']); ?>">
     <div class="editor-eyebrow">Editing your post</div>
