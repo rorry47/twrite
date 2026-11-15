@@ -8,6 +8,10 @@ function twrite_safe_url(string $url): string {
     return in_array(strtolower($parts['scheme']), ['http', 'https'], true) ? $url : '';
 }
 function twrite_sanitize_html(string $html): string {
+    if (!class_exists('DOMDocument')) {
+        error_log('PHP DOM extension is required for rich text sanitization');
+        return nl2br(htmlspecialchars(strip_tags($html), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+    }
     $dom = new DOMDocument('1.0', 'UTF-8');
     $previous = libxml_use_internal_errors(true);
     $dom->loadHTML('<?xml encoding="UTF-8"><div id="twrite-root">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET);
