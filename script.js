@@ -9,43 +9,77 @@ document.getElementById('formText')?.addEventListener('submit', function () {
     document.getElementById('editableInput').value = editableEl ? editableEl.innerHTML   : '';
 });
 
-// ─── SessionStorage: восстановление черновика ──────────────────────────────
-// В режиме редактирования (edit-mode) НЕ загружаем sessionStorage —
-// контент уже вставлен сервером, и sessionStorage от create его бы затёр.
-document.addEventListener('DOMContentLoaded', function () {
-    const editableEl = document.getElementById('editable');
-    const isEditMode = editableEl && editableEl.dataset.editMode === 'true';
-
-    if (!isEditMode) {
-        document.querySelectorAll('textarea, input, div[contenteditable="true"]').forEach(function (e) {
-            const key = e.getAttribute('data-name') || e.getAttribute('name');
-            if (!key) return;
-            const stored = window.sessionStorage.getItem(key);
-            if (stored !== null) {
-                if (e.tagName.toLowerCase() === 'div') {
-                    e.innerHTML = stored;
-                } else {
-                    e.value = stored;
-                }
-            }
-            e.addEventListener('input', function () {
-                const val = e.tagName.toLowerCase() === 'div' ? e.innerHTML : e.value;
-                window.sessionStorage.setItem(key, val);
-            });
-        });
-    } else {
-        // В edit-режиме слушаем изменения, но не восстанавливаем из хранилища
-        document.querySelectorAll('div[contenteditable="true"]').forEach(function (e) {
-            const key = e.getAttribute('data-name');
-            if (!key) return;
-            e.addEventListener('input', function () {
-                window.sessionStorage.setItem('edit_' + key, e.innerHTML);
-            });
-        });
+// ─── Per-tab drafts: isolated by editor mode and post slug ──────────────
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    const saved = params.get('draft_saved');
+    if (saved === 'create' || /^edit_[a-f0-9]{32}$/.test(saved || '')) {
+        try { sessionStorage.removeItem('twrite_draft_' + saved); } catch (e) {}
+        params.delete('draft_saved');
+        const clean = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+        history.replaceState(null, '', clean);
     }
+})();
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('formText');
+    if (!form) return;
+    const editor = document.getElementById('editable');
+    const editing = editor && editor.dataset.editMode === 'true';
+    const slug = new URLSearchParams(window.location.search).get('edit');
+    const scope = editing && /^[a-f0-9]{32}$/.test(slug || '') ? 'edit_' + slug : 'create';
+    const storageKey = 'twrite_draft_' + scope;
+    const fields = ['b_input', 'a_input', 'editable'];
+    const snapshot = () => {
+        const data = {};
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = id === 'editable' ? el.innerHTML : el.textContent;
+        });
+        ['delete', 'access_ip'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.checked;
+        });
+        return data;
+    };
+    let baseline = JSON.stringify(snapshot());
+    try {
+        const saved = JSON.parse(sessionStorage.getItem(storageKey) || 'null');
+        if (saved && typeof saved === 'object' && saved.fields) {
+            const restore = !editing || window.confirm('Restore unsaved edits for this post?');
+            if (restore) {
+                fields.forEach(id => {
+                    const el = document.getElementById(id);
+                    const value = saved.fields[id];
+                    if (!el || typeof value !== 'string') return;
+                    if (id === 'editable') el.innerHTML = value;
+                    else el.textContent = value;
+                });
+                ['delete', 'access_ip'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && typeof saved.fields[id] === 'boolean') el.checked = saved.fields[id];
+                });
+                baseline = JSON.stringify(snapshot());
+            }
+        }
+    } catch (e) {}
+    let pending;
+    const save = () => {
+        try {
+            const current = snapshot();
+            if (JSON.stringify(current) !== baseline) {
+                sessionStorage.setItem(storageKey, JSON.stringify({fields: current}));
+            }
+        } catch (e) {}
+    };
+    const schedule = () => { clearTimeout(pending); pending = setTimeout(save, 350); };
+    form.addEventListener('input', schedule);
+    form.addEventListener('change', schedule);
+    form.addEventListener('submit', () => { clearTimeout(pending); save(); });
+    window.addEventListener('pagehide', () => { clearTimeout(pending); save(); });
 });
 
-// ─── Preserve drafts on submit; server errors must not destroy work ─────────
+// ─── Preserve drafts on submit; only clear after confirmed redirect ─────
 // ─── Placeholder для contenteditable ──────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('div[contenteditable="true"]').forEach(function (div) {
@@ -84,34 +118,33 @@ document.addEventListener('DOMContentLoaded', function () {
     const editable = document.getElementById('editable');
     if (!editable) return;
 
+    // Convert only a complete pasted/typed image URL in a text node.
     editable.addEventListener('input', function () {
-        const regex = /(https?:\/\/\S+\.(?:jpg|jpeg|png|gif))/gi;
-        const sel   = window.getSelection();
-        const range = sel && sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
-
-        Array.from(editable.childNodes).forEach(function (node) {
-            if (node.nodeType !== Node.TEXT_NODE) return;
-            const matches = node.textContent.match(regex);
-            if (!matches) return;
-
-            matches.forEach(function (url) {
-                const parts    = node.textContent.split(url);
-                const img      = document.createElement('img');
-                img.src        = url;
-                img.alt        = 'Image';
-                img.style.cssText = 'max-width:100%;height:auto;';
-
-                if (parts[0]) editable.insertBefore(document.createTextNode(parts[0]), node);
-                editable.insertBefore(img, node);
-                if (parts[1]) editable.insertBefore(document.createTextNode(parts[1]), node);
-                editable.removeChild(node);
-            });
+        const regex = /https?:\/\/[^\\s<>"']+?\\.(?:jpe?g|png|gif|webp)(?:\\?[^\\s<>"']*)?/gi;
+        const walker = document.createTreeWalker(editable, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+        nodes.forEach(function (node) {
+            if (!node.parentNode || node.parentElement.closest('a,code,pre')) return;
+            const text = node.nodeValue;
+            regex.lastIndex = 0;
+            if (!regex.test(text)) return;
+            regex.lastIndex = 0;
+            const fragment = document.createDocumentFragment();
+            let last = 0, match;
+            while ((match = regex.exec(text)) !== null) {
+                fragment.appendChild(document.createTextNode(text.slice(last, match.index)));
+                const img = document.createElement('img');
+                img.src = match[0];
+                img.alt = 'Image';
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                fragment.appendChild(img);
+                last = match.index + match[0].length;
+            }
+            fragment.appendChild(document.createTextNode(text.slice(last)));
+            node.parentNode.replaceChild(fragment, node);
         });
-
-        if (range && sel) {
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
     });
 });
 
