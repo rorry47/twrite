@@ -57,12 +57,33 @@ if (in_array(basename($url_path), $p_page_block)) {
     exit();
 }
 
-$host = '';         // host 
-$user = '';     // user 
-$pass = '';      // password
-$db_name = '';  // name 
-
-$link_db = mysqli_connect($host, $user, $pass, $db_name, 3306);
+// Load credentials from a private .env file; never expose it over HTTP.
+$env_file = __DIR__ . '/.env';
+if (!is_file($env_file) || !is_readable($env_file)) {
+    error_log('Missing or unreadable twrite/.env');
+    http_response_code(503);
+    exit('Service configuration unavailable.');
+}
+$env = parse_ini_file($env_file, false, INI_SCANNER_RAW);
+if (!is_array($env)) {
+    error_log('Invalid twrite/.env format');
+    http_response_code(503);
+    exit('Service configuration unavailable.');
+}
+foreach (['DB_HOST', 'DB_USER', 'DB_PASSWORD', 'DB_NAME'] as $key) {
+    if (!isset($env[$key]) || !is_string($env[$key])) {
+        error_log('Missing environment setting: ' . $key);
+        http_response_code(503);
+        exit('Service configuration unavailable.');
+    }
+}
+$port = $env['DB_PORT'] ?? '3306';
+if (!ctype_digit((string)$port) || (int)$port < 1 || (int)$port > 65535) {
+    error_log('Invalid DB_PORT in twrite/.env');
+    http_response_code(503);
+    exit('Service configuration unavailable.');
+}
+$link_db = mysqli_connect($env['DB_HOST'], $env['DB_USER'], $env['DB_PASSWORD'], $env['DB_NAME'], (int)$port);
 if (!$link_db) {
     error_log("DB connect error: " . mysqli_connect_error());
     die("Database connection error. Please try later.");
