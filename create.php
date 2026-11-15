@@ -97,6 +97,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
     <link href="/css/edit.css" rel="stylesheet" />
+    <link href="/css/twrite.css?v=2" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -107,12 +108,15 @@ $csrf_token = $_SESSION['csrf_token'];
     </script>
 </head>
 <body>
+<header class="site-header"><a class="brand" href="/"><span class="brand-mark">t</span>twrite</a><span class="header-right">Write. Share. Simple.</span></header>
 <div class="content">
 <form id="formText" method="post">
+    <div class="editor-eyebrow"> New publication</div>
     <div class="b_input" id="b_input" contenteditable="true" data-name="title" data-placeholder="Title"></div>
     <input type="hidden" name="title" id="titleInput">
     <div class="a_input" id="a_input" contenteditable="true" data-name="author" data-placeholder="Author"></div>
     <input type="hidden" name="author" id="authorInput">
+    <div class="editor-divider"></div>
     <div id="toolbar">
         <button type="button" onclick="document.execCommand('bold', false, '');"><i class="fa-solid fa-bold"></i></button>
         <button type="button" onclick="document.execCommand('italic', false, '');"><i class="fa-solid fa-italic"></i></button>
@@ -133,9 +137,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
 
     <div class="spoiler">
-        <div class="spoiler-header" onclick="toggleSpoiler(this)">
-            <i class="fa-solid fa-sort-down"></i>
-        </div>
+        <div class="spoiler-header" onclick="toggleSpoiler(this)"><span><i class="fa-solid fa-sliders"></i> Publication settings</span><i class="fa-solid fa-chevron-down"></i></div>
         <div class="spoiler-content">
             <div>
                 <input id="delete" name="delete" type="checkbox">
@@ -152,9 +154,10 @@ $csrf_token = $_SESSION['csrf_token'];
         </div>
     </div>
 
-    <div><button class="btns" name="publish" id="publish" type="submit"><i class="fa-regular fa-paper-plane"></i> Publish</button></div>
+    <div class="editor-actions"><span class="editor-hint"><i class="fa-solid fa-shield-halved"></i> Your draft is saved in this tab</span><button class="btns" name="publish" id="publish" type="submit"><i class="fa-regular fa-paper-plane"></i> Publish</button></div>
 </form>
 </div>
 <script src="/script.js"></script>
+<footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
