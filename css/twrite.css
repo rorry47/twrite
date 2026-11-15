@@ -163,3 +163,8 @@ body.focus-mode .theme-picker{display:none!important}
 body:has(.copy-post-link) .theme-picker{right:22px;bottom:22px}
 body:has(.copy-post-link) .copy-post-link{right:calc(22px + 104px + 12px);bottom:23px;min-height:38px;max-width:calc(100vw - 160px);white-space:nowrap}
 @media(max-width:480px){body:has(.copy-post-link) .theme-picker{right:14px;bottom:14px}body:has(.copy-post-link) .copy-post-link{right:calc(14px + 104px + 10px);bottom:15px}}
+
+/* Additional dark palettes: balanced contrast for text, borders and controls. */
+[data-theme=graphite]{color-scheme:dark;--bg:#24272c;--surface:transparent;--ink:#f2eee9;--muted:#b4a9a0;--line:#48464a;--accent:#e2a76e;--accent-hover:#f3c393;--soft:#343239;--shadow:none;--code:#303138}
+[data-theme=deep-ocean]{color-scheme:dark;--bg:#0b1e2c;--surface:transparent;--ink:#e4f3f6;--muted:#93b5c1;--line:#2a4a5a;--accent:#58bdd1;--accent-hover:#8ad9e5;--soft:#173444;--shadow:none;--code:#142c3b}
+[data-theme=evergreen]{color-scheme:dark;--bg:#10241c;--surface:transparent;--ink:#e6f2e9;--muted:#9db8a7;--line:#2d4c3a;--accent:#8ec6a1;--accent-hover:#b7dfc2;--soft:#1c3829;--shadow:none;--code:#1b3226}
