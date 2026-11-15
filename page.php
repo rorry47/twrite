@@ -122,7 +122,7 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
 </script>
 </head>
 <body>
-<header class="site-header"><a class="brand" href="/"><span class="brand-mark">t</span>twrite</a><span class="header-right">Write. Share. Simple.</span></header>
+<header class="site-header"><a class="brand" href="/"><span class="brand-mark"><?php echo htmlspecialchars(mb_substr($name_project, 0, 1, "UTF-8"), ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></span><?php echo htmlspecialchars($name_project, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></a><span class="header-right">Write. Share. Simple.</span></header>
 <button type="button" id="copy-post-link" class="copy-post-link" aria-label="Copy publication link" title="Copy publication link"><i class="fa-regular fa-copy"></i><span>Copy link</span></button>
 <script>
 document.getElementById('copy-post-link').addEventListener('click', async function () {
