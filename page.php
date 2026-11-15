@@ -84,7 +84,7 @@ $page_desc = strip_tags(mb_substr($row_page['text'], 0, 100, "UTF-8")) . "...";
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=6" rel="stylesheet" />
+    <link href="/css/twrite.css?v=7" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -157,6 +157,7 @@ endif;
     <div class="a_input" id="a_input"><i class="fa-solid fa-at"></i> <?php echo htmlspecialchars($row_page['author'], ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>
     <div class="data"><i class="fa-regular fa-calendar-days"></i> <?php echo htmlspecialchars(substr($row_page['date'], 0, 10)); ?></div>
+    <div class="reader-reading-time" id="reader-reading-time" aria-label="Estimated reading time"></div>
     <div id="editable" class="editable"><?php echo twrite_sanitize_html($row_page['text']); ?></div>
 
     <?php if ($is_owner): ?>
@@ -168,7 +169,7 @@ endif;
     </div>
 </div>
 
-<script src="/script.js"></script>
+<script src="/script.js?v=9"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
