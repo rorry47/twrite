@@ -96,7 +96,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <link rel="icon" href="/logo.png"/>
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=5" rel="stylesheet" />
+    <link href="/css/twrite.css?v=6" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -153,10 +153,11 @@ $csrf_token = $_SESSION['csrf_token'];
         </div>
     </div>
 
-    <div class="editor-actions"><span class="editor-hint"><i class="fa-solid fa-shield-halved"></i> Your draft is saved in this tab</span><button class="btns" name="publish" id="publish" type="submit"><i class="fa-regular fa-paper-plane"></i> Publish</button></div>
+    <div class="editor-actions"><span class="editor-hint"><i class="fa-solid fa-shield-halved"></i> Your draft is saved in this tab</span><button type="button" class="preview-button" id="preview-post"><i class="fa-regular fa-eye"></i> Preview</button><button class="btns" name="publish" id="publish" type="submit"><i class="fa-regular fa-paper-plane"></i> Publish</button></div>
 </form>
+<dialog id="preview-dialog" class="preview-dialog" aria-label="Publication preview"><div class="preview-top"><span>Preview</span><button type="button" id="close-preview" aria-label="Close preview"><i class="fa-solid fa-xmark"></i></button></div><article class="reading-page"><h1 id="preview-title"></h1><div id="preview-author"></div><div id="preview-body"></div></article></dialog>
 </div>
-<script src="/script.js?v=7"></script>
+<script src="/script.js?v=8"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
