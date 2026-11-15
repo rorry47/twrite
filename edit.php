@@ -96,7 +96,7 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     <meta name="twitter:description" content="Simple service for publishing text posts.">
     <link href="/css/fontawesome.css" rel="stylesheet" />
     <link href="/css/all.min.css" rel="stylesheet" />
-    <link href="/css/twrite.css?v=6" rel="stylesheet" />
+    <link href="/css/twrite.css?v=7" rel="stylesheet" />
     <script>
     (function(){
         var s = localStorage.getItem('theme');
@@ -135,6 +135,7 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     <input type="hidden" name="editable" id="editableInput">
     <input type="hidden" name="csrf_token" value="<?php echo $csrf_token_edit; ?>">
 
+    <div class="writing-stats"><span id="word-count">0 words</span><span class="stats-dot">·</span><span id="char-count">0 characters</span><span class="stats-dot">·</span><span id="reading-time">0 min read</span><button type="button" id="focus-toggle" class="focus-toggle" aria-pressed="false" title="Focus mode"><i class="fa-solid fa-expand"></i> Focus</button></div>
     <div class="spoiler">
         <div class="spoiler-header" onclick="toggleSpoiler(this)"><span><i class="fa-solid fa-sliders"></i> Publication settings</span><i class="fa-solid fa-chevron-down"></i></div>
         <div class="spoiler-content">
@@ -154,10 +155,11 @@ $csrf_token_edit = $_SESSION['csrf_token'];
     </div>
 
     <div class="editor-actions"><span class="editor-hint"><i class="fa-solid fa-shield-halved"></i> Your draft is saved in this tab</span><button type="button" class="preview-button" id="preview-post"><i class="fa-regular fa-eye"></i> Preview</button><button class="btns" name="publish" id="publish" type="submit"><i class="fa-regular fa-paper-plane"></i> Save</button></div>
+<p class="shortcut-hint">Shortcuts: <kbd>Ctrl/Cmd</kbd> + <kbd>S</kbd> publish/save <span>·</span> <kbd>Ctrl/Cmd</kbd> + <kbd>B</kbd> bold <span>·</span> <kbd>Esc</kbd> exit focus</p>
 </form>
 <dialog id="preview-dialog" class="preview-dialog" aria-label="Publication preview"><div class="preview-top"><span>Preview</span><button type="button" id="close-preview" aria-label="Close preview"><i class="fa-solid fa-xmark"></i></button></div><article class="reading-page"><h1 id="preview-title"></h1><div id="preview-author"></div><div id="preview-body"></div></article></dialog>
 </div>
-<script src="/script.js?v=8"></script>
+<script src="/script.js?v=9"></script>
 <footer class="site-footer">twrite · A simple space for your words</footer>
 </body>
 </html>
