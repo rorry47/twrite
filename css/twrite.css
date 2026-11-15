@@ -35,3 +35,53 @@ div[contenteditable=true]:empty:before,div[contenteditable=true].empty:before{co
 .locked-page{text-align:center;max-width:560px;margin:auto}.lock-icon{width:60px;height:60px;margin:0 auto 18px;display:grid;place-items:center;border-radius:18px;background:var(--soft);color:var(--accent);font-size:24px}.locked-page h1{font:800 28px 'Manrope',sans-serif;margin:0 0 8px}.locked-page p{color:var(--muted);margin:0 0 25px}.locked-page input[type=password]{display:block;width:100%;padding:13px 15px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);margin-bottom:14px}.locked-page .btns{width:100%}
 @media(max-width:600px){.site-header{padding:20px 18px 0}.content{width:calc(100% - 20px);margin:23px auto 24px;border-radius:17px}#formText,.reading-page,.locked-page{padding:28px 20px}.editor-divider{margin:23px 0 19px}#editable{min-height:260px}.editor-actions{align-items:stretch}.editor-actions .btns{width:100%}.site-footer{padding-bottom:75px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;animation:none!important}}
+
+/* Writer mode: open canvas, no central card */
+:root{--bg:#fcfbf9;--surface:transparent;--ink:#353a43;--muted:#92949a;--line:#eae8e4;--accent:#8b88b4;--accent-hover:#77739f;--soft:#f3f1f4;--shadow:none;--code:#f3f2ef}
+[data-theme=dark]{--bg:#17191f;--surface:transparent;--ink:#dedee3;--muted:#92939f;--line:#34353c;--accent:#b1aace;--accent-hover:#cac3e3;--soft:#24252d;--shadow:none;--code:#24252c}
+html{background:var(--bg)}
+body{background:var(--bg);font-size:16px;line-height:1.85}
+.site-header{max-width:1120px;padding:30px 36px 0}
+.brand{font-size:20px;font-weight:700;letter-spacing:-.8px}
+.brand-mark{width:29px;height:29px;border-radius:9px;font-size:16px;background:#b2a9c9;box-shadow:none}
+.header-right{font-size:10px;font-weight:500;letter-spacing:.14em;opacity:.65}
+.content{width:min(calc(100% - 64px),760px);max-width:none;margin:76px auto 40px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;overflow:visible}
+#formText,.reading-page,.locked-page{padding:0}
+.editor-eyebrow{font-size:10px;font-weight:600;letter-spacing:.16em;color:var(--muted);margin-bottom:22px}
+.editor-eyebrow:before{width:5px;height:5px;background:var(--accent);opacity:.7}
+.b_input{font-family:'Manrope',system-ui,sans-serif;font-size:clamp(30px,4vw,43px);font-weight:600;letter-spacing:-.045em;line-height:1.38;min-height:1.5em;padding:0}
+.a_input{font-size:13px;margin-top:19px;padding:0;color:var(--muted)}
+#formText .b_input:focus,#formText .a_input:focus{box-shadow:none}
+.editor-divider{background:var(--line);margin:36px 0 33px;opacity:.85}
+#editable{min-height:42vh;font-size:17px;line-height:2.05;letter-spacing:.005em}
+#editable p{margin:0 0 1.15em}
+#editable img{border-radius:6px}
+.spoiler{margin-top:24px;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+.spoiler-header{padding:16px 0;font-size:12px;font-weight:500;color:var(--muted)}
+.spoiler-header:hover{background:transparent;color:var(--ink)}
+.spoiler-content{background:transparent;padding:0 2px}
+.spoiler-content>div{font-size:13px}
+.spoiler-content input[type=password]{background:transparent}
+.editor-actions{margin-top:25px}
+.editor-hint{font-size:11px;opacity:.8}
+.btns{background:var(--accent);color:#fff;box-shadow:none;border-radius:9px;padding:10px 19px;min-height:41px;font-size:13px;font-weight:600}
+.btns:hover{background:var(--accent-hover);transform:none}
+#theme-toggle{width:38px;height:38px;right:22px;bottom:22px;border:1px solid var(--line);border-radius:50%;background:var(--bg);box-shadow:none;font-size:15px}
+.site-footer{font-size:11px;opacity:.7;padding-bottom:36px}
+.reading-page .b_input{font-size:clamp(32px,4vw,45px);margin-bottom:16px}
+.reading-page #editable{min-height:0;margin-top:34px}
+.reading-page form{margin-top:45px}
+.locked-page{max-width:420px;margin:90px auto 0}
+.lock-icon{background:var(--soft);border-radius:50%}
+@media(max-width:600px){
+.site-header{padding:22px 22px 0}
+.header-right{display:none}
+.content{width:calc(100% - 44px);margin:54px auto 30px;border:0;border-radius:0}
+#formText,.reading-page,.locked-page{padding:0}
+.b_input{font-size:31px}
+#editable{font-size:16px;min-height:38vh}
+.editor-divider{margin:28px 0}
+.editor-actions{align-items:center}
+.editor-actions .btns{width:auto}
+.site-footer{padding-bottom:70px}
+}
