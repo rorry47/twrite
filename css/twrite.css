@@ -205,3 +205,60 @@ body:has(.copy-post-link) .copy-post-link{right:calc(22px + 104px + 12px);bottom
 #formText #toolbar .table-grid-cell.selected,#formText #toolbar .table-grid-cell:hover{background:var(--accent);border-color:var(--accent)}
 #formText #toolbar .table-grid-cell:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 @media(max-width:400px){.table-grid-cells{grid-template-columns:repeat(8,19px);gap:3px}#formText #toolbar .table-grid-cell{width:19px;height:19px}}
+
+/* Mobile-first refinements: small screens, touch controls and safe-area insets. */
+html,body{max-width:100%;overflow-x:clip}
+#formText,.reading-page,.locked-page{min-width:0}
+#editable,#preview-body{overflow-wrap:anywhere}
+#editable table,#preview-body table{max-width:100%}
+#preview-body table{border-collapse:collapse;width:100%;table-layout:fixed;margin:1.3em 0}
+#preview-body th,#preview-body td{border:1px solid var(--line);padding:9px 12px;overflow-wrap:anywhere;vertical-align:top}
+#preview-body th{background:var(--soft)}
+@media(max-width:700px){
+  .site-header{padding:20px max(18px,env(safe-area-inset-right)) 0 max(18px,env(safe-area-inset-left));gap:10px}
+  .brand{font-size:19px;min-width:0;overflow-wrap:anywhere}
+  .brand-mark{flex-shrink:0}
+  .content{width:auto;margin:44px max(18px,env(safe-area-inset-right)) 30px max(18px,env(safe-area-inset-left))}
+  .b_input,.reading-page .b_input{font-size:clamp(27px,7vw,37px);line-height:1.32}
+  .a_input{margin-top:14px}
+  #editable,.reading-page #editable{font-size:16px;line-height:1.85}
+  #formText #format-trigger{width:40px;height:40px;min-width:40px}
+  #formText #toolbar{gap:4px;align-items:center}
+  #formText #toolbar.is-open{max-height:340px;margin:-5px 0 20px;padding:9px}
+  #formText #toolbar button,#formText #toolbar select{min-height:42px;min-width:42px;padding:8px 10px;touch-action:manipulation}
+  #formText #toolbar select{max-width:calc(50% - 6px);min-width:0;flex:1 1 110px}
+  #formText #toolbar .table-grid-picker{left:0;right:auto;max-width:calc(100vw - 42px);padding:12px}
+  .writing-stats{gap:6px 9px;line-height:1.5}
+  .focus-toggle{min-height:40px;padding:8px 10px}
+  .editor-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .editor-actions .editor-hint{grid-column:1/-1;width:auto}
+  .editor-actions .preview-button,.editor-actions .btns{width:100%;min-width:0;min-height:46px;margin:0;justify-content:center}
+  .spoiler-header{min-height:48px}
+  .spoiler-content label{overflow-wrap:anywhere}
+  .ip{overflow-wrap:anywhere;word-break:break-word}
+  .shortcut-hint{display:none}
+  .preview-dialog{width:calc(100% - 20px);max-width:none;max-height:calc(100dvh - 20px);padding:18px 18px 30px}
+  .preview-dialog .reading-page{padding:0}
+  #preview-title{font-size:clamp(26px,7vw,36px)}
+  #preview-body{font-size:16px;line-height:1.85}
+  .locked-page{margin:55px auto 0}
+  .site-footer{padding:16px 18px calc(88px + env(safe-area-inset-bottom));overflow-wrap:anywhere}
+  .theme-picker{right:max(14px,env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom))}
+  body:has(.copy-post-link) .theme-picker{right:max(14px,env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom))}
+  body:has(.copy-post-link) .copy-post-link{right:calc(max(14px,env(safe-area-inset-right)) + 104px + 10px);bottom:calc(15px + env(safe-area-inset-bottom));max-width:calc(100vw - 156px)}
+  .theme-picker-menu{max-height:min(420px,calc(100dvh - 95px))}
+}
+@media(max-width:380px){
+  .content{margin-left:15px;margin-right:15px}
+  .site-header{padding-left:15px;padding-right:15px}
+  #formText #toolbar select{flex-basis:100px}
+  .writing-stats .stats-dot{display:none}
+  .writing-stats{gap:5px 10px}
+  .focus-toggle{margin-left:0}
+  .table-grid-cells{grid-template-columns:repeat(8,19px);gap:3px}
+  #formText #toolbar .table-grid-cell{width:19px;height:19px}
+}
+@media(hover:none) and (pointer:coarse){
+  #formText #toolbar button,#formText #toolbar select,.editor-actions button,.spoiler-header,.theme-picker-option{touch-action:manipulation}
+  .theme-picker-option{min-height:44px}
+}
