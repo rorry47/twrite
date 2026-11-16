@@ -262,3 +262,24 @@ html,body{max-width:100%;overflow-x:clip}
   #formText #toolbar button,#formText #toolbar select,.editor-actions button,.spoiler-header,.theme-picker-option{touch-action:manipulation}
   .theme-picker-option{min-height:44px}
 }
+
+/* Mobile: move theme and copy actions to a dedicated row beneath the header. */
+@media(max-width:700px){
+  .theme-picker,body:has(.copy-post-link) .theme-picker{
+    position:absolute;top:70px;right:max(18px,env(safe-area-inset-right));bottom:auto;
+  }
+  .theme-picker-menu{
+    top:calc(100% + 10px);bottom:auto;
+    max-height:min(420px,calc(100dvh - 130px));
+  }
+  body:has(.copy-post-link) .copy-post-link{
+    position:absolute;top:71px;right:calc(max(18px,env(safe-area-inset-right)) + 104px + 10px);
+    bottom:auto;max-width:calc(100vw - 160px);
+  }
+  .content{margin-top:98px}
+  .site-footer{padding-bottom:36px}
+}
+@media(max-width:380px){
+  .theme-picker,body:has(.copy-post-link) .theme-picker{right:15px}
+  body:has(.copy-post-link) .copy-post-link{right:129px}
+}
