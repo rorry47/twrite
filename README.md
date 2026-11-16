@@ -2,6 +2,8 @@
 
 A lightweight, self-hosted service for writing and sharing text publications, inspired by [Telegra.ph](https://telegra.ph/). No account is required to publish.
 
+![twrite screenshot](twrite.png)
+
 ## Features
 
 - **Rich-text editor:** bold, italic, underline, strikethrough, links, code blocks, font sizes, and semantic heading styles (Heading 1–3 and paragraph).
@@ -66,7 +68,3 @@ Use **Publication settings** to configure optional restrictions and expiration b
 - Publication throttling and password-attempt limits are currently **session-based**, not a substitute for web-server or edge-level rate limiting.
 - Content Security Policy is currently **report-only**; do not assume a strict enforced CSP.
 - IP-restricted publications use the server's observed client address. Behind a reverse proxy, configure trusted client-IP forwarding carefully before relying on this restriction.
-
-## Screenshot
-
-![twrite screenshot](scrn.jpg)
